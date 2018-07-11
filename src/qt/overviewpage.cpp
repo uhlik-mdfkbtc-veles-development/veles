@@ -7,6 +7,7 @@
 
 #include <qt/bitcoinunits.h>
 #include <qt/clientmodel.h>
+#include <qt/darksendconfig.h>
 #include <qt/guiconstants.h>
 #include <qt/guiutil.h>
 #include <qt/optionsmodel.h>
@@ -639,9 +640,18 @@ void OverviewPage::togglePrivateSend(){
 
     if(!privateSendClient.fEnablePrivateSend){
         ui->togglePrivateSend->setText(tr("Start Mixing"));
-        privateSendClient.ResetPool();
+        privateSendClient.UnlockCoins();
     } else {
         ui->togglePrivateSend->setText(tr("Stop Mixing"));
+
+        /* show darksend configuration if client has defaults set */
+
+        if(privateSendClient.nPrivateSendAmount == 0){
+            DarksendConfig dlg(this);
+            dlg.setModel(walletModel);
+            dlg.exec();
+        }
+
     }
 }
 

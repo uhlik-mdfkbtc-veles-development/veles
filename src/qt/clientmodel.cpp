@@ -25,7 +25,6 @@
 #include <util/system.h>
 #include <warnings.h>
 
-#include <privatesend.h> // PRIVATESEND
 // Dash
 #include <masternodeman.h>
 #include <masternode-sync.h>
