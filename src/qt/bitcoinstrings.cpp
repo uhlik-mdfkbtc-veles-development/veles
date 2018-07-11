@@ -27,6 +27,27 @@ QT_TRANSLATE_NOOP("bitcoin-core", ""
 "keypool. Please use -upgradewallet=169900 or -upgradewallet with no version "
 "specified."),
 QT_TRANSLATE_NOOP("bitcoin-core", ""
+"Disable all Dash specific functionality (Masternodes, PrivateSend, "
+"InstantSend, Governance) (0-1, default: %u)"),
+QT_TRANSLATE_NOOP("bitcoin-core", ""
+"Enable multiple PrivateSend mixing sessions per block, experimental (0-1, "
+"default: %u)"),
+QT_TRANSLATE_NOOP("bitcoin-core", ""
+"Enable use of automated PrivateSend for funds stored in this wallet (0-1, "
+"default: %u)"),
+QT_TRANSLATE_NOOP("bitcoin-core", ""
+"PrivateSend uses exact denominated amounts to send funds, you might simply "
+"need to anonymize some more coins."),
+QT_TRANSLATE_NOOP("bitcoin-core", ""
+"Provide liquidity to PrivateSend by infrequently mixing coins on a continual "
+"basis (%u-%u, default: %u, 1=very frequent, high fees, %u=very infrequent, "
+"low fees)"),
+QT_TRANSLATE_NOOP("dash-core", ""
+"Unable to locate enough PrivateSend denominated funds for this transaction."),
+QT_TRANSLATE_NOOP("dash-core", ""
+"Unable to locate enough PrivateSend non-denominated funds for this "
+"transaction."),
+QT_TRANSLATE_NOOP("bitcoin-core", ""
 "Distributed under the MIT software license, see the accompanying file %s or "
 "%s"),
 QT_TRANSLATE_NOOP("bitcoin-core", ""
@@ -140,6 +161,12 @@ QT_TRANSLATE_NOOP("bitcoin-core", "Invalid amount for -fallbackfee=<amount>: '%s
 QT_TRANSLATE_NOOP("bitcoin-core", "Invalid amount for -paytxfee=<amount>: '%s' (must be at least %s)"),
 QT_TRANSLATE_NOOP("bitcoin-core", "Invalid netmask specified in -whitelist: '%s'"),
 QT_TRANSLATE_NOOP("bitcoin-core", "Keypool ran out, please call keypoolrefill first"),
+QT_TRANSLATE_NOOP("bitcoin-core", "Last PrivateSend was too recent."),
+QT_TRANSLATE_NOOP("bitcoin-core", "Last successful PrivateSend action was too recent."),
+QT_TRANSLATE_NOOP("bitcoin-core", "PrivateSend is idle."),
+QT_TRANSLATE_NOOP("bitcoin-core", "PrivateSend options:"),
+QT_TRANSLATE_NOOP("bitcoin-core", "PrivateSend request complete:"),
+QT_TRANSLATE_NOOP("bitcoin-core", "PrivateSend request incompletebitcoin:"),
 QT_TRANSLATE_NOOP("bitcoin-core", "Loading P2P addresses..."),
 QT_TRANSLATE_NOOP("bitcoin-core", "Loading banlist..."),
 QT_TRANSLATE_NOOP("bitcoin-core", "Loading block index..."),

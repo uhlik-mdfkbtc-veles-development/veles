@@ -86,7 +86,8 @@ BitcoinGUI::BitcoinGUI(interfaces::Node& node, const PlatformStyle *_platformSty
     m_node(node),
     trayIconMenu{new QMenu()},
     platformStyle(_platformStyle),
-    m_network_style(networkStyle)
+    m_network_style(networkStyle),
+    showPrivateSendHelpAction(0) // PRIVATESEND
 {
     QSettings settings;
     if (!restoreGeometry(settings.value("MainWindowGeometry").toByteArray())) {
@@ -487,6 +488,12 @@ void BitcoinGUI::createActions()
     showHelpMessageAction->setMenuRole(QAction::NoRole);
     showHelpMessageAction->setStatusTip(tr("Show the %1 help message to get a list with possible Veles command-line options").arg(tr(PACKAGE_NAME)));
 
+    // PRIVATESEND START
+    showPrivateSendHelpAction = new QAction(QIcon(":/icons/" + theme + "/info"), tr("&PrivateSend information"), this);
+    showPrivateSendHelpAction->setMenuRole(QAction::NoRole);
+    showPrivateSendHelpAction->setStatusTip(tr("Show the PrivateSend basic information"));
+    // PRIVATESEND END
+
     // Dash
     // FXTC TODO: menu items
     //-//showPrivateSendHelpAction = new QAction(QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation), tr("&PrivateSend information"), this);
@@ -708,6 +715,7 @@ void BitcoinGUI::createMenuBar()
 
     QMenu *help = appMenuBar->addMenu(tr("&Help"));
     help->addAction(showHelpMessageAction);
+    help->addAction(showPrivateSendHelpAction); // PRIVATESEND
     help->addSeparator();
     help->addAction(aboutAction);
     help->addAction(aboutQtAction);
@@ -1048,7 +1056,15 @@ void BitcoinGUI::showHelpMessageClicked()
 {
     helpMessageDialog->show();
 }
-
+// PRIVATESEND START
+void BitcoinGUI::showPrivateSendHelpClicked()
+{
+    if(!clientModel)
+        return;
+    HelpMessageDialog dlg(m_node, this, true);
+    dlg.exec();
+}
+// PRIVATESEND END
 #ifdef ENABLE_WALLET
 void BitcoinGUI::openClicked()
 {
@@ -1786,7 +1802,7 @@ UnitDisplayStatusBarControl::UnitDisplayStatusBarControl(const PlatformStyle *pl
     }
     setMinimumSize(max_width, 0);
     setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-    // VELES BEGIN  
+    // VELES BEGIN
     //setStyleSheet(QString("QLabel { color : %1 }").arg(platformStyle->SingleColor().name()));
 }
 

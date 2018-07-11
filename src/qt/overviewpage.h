@@ -38,6 +38,7 @@ public:
     void showOutOfSyncWarning(bool fShow);
 
 public Q_SLOTS:
+    void privateSendStatus(); // PRIVATESEND
     void setBalance(const interfaces::WalletBalances& balances);
 
 Q_SIGNALS:
@@ -52,8 +53,16 @@ private:
 
     TxViewDelegate *txdelegate;
     std::unique_ptr<TransactionFilterProxy> filter;
+    void DisablePrivateSendCompletely(); // PRIVATESEND
 
 private Q_SLOTS:
+    // PRIVATESEND START
+    void togglePrivateSend();
+    void privateSendAuto();
+    void privateSendReset();
+    void privateSendInfo();
+    void updatePrivateSendProgress();
+    // PRIVATESEND END
     void updateDisplayUnit();
     void handleTransactionClicked(const QModelIndex &index);
     void updateAlerts(const QString &warnings);

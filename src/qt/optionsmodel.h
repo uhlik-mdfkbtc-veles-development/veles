@@ -52,6 +52,12 @@ public:
         // VELES BEGIN
         Theme,                  // QString
         // VELES END
+        // PRIVATESEND START
+        ShowPrivateSendPopups,  // bool
+        PrivateSendRounds,      // int
+        PrivateSendAmount,      // int
+        PrivateSendMultiSession,// bool
+        // PRIVATESEND END
         Language,               // QString
         CoinControlFeatures,    // bool
         ThreadsScriptVerif,     // int
@@ -113,6 +119,10 @@ Q_SIGNALS:
     void displayUnitChanged(int unit);
     void coinControlFeaturesChanged(bool);
     void hideTrayIconChanged(bool);
+    // PRIVATESEND START
+    void privateSendRoundsChanged();
+    void privateSentAmountChanged();
+    // PRIVATESEND END
 };
 
 #endif // BITCOIN_QT_OPTIONSMODEL_H
