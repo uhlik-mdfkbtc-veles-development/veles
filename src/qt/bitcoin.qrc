@@ -102,10 +102,15 @@
         <file alias="splash_testnet">res/images/splash_testnet.png</file>
         <file alias="splash_prerelease">res/images/splash_prerelease.png</file>
         <file alias="header_bg">res/images/header_bg.png</file>
+        <file alias="bg-pattern">res/images/bg-pattern.png</file>
+    </qresource>
+    <qresource prefix="/fonts">
+        <file alias="jura">res/fonts/jura.ttf</file>
     </qresource>
     <qresource prefix="/css">
         <file alias="dark">res/css/dark.css</file>
         <file alias="light">res/css/light.css</file>
+        <file alias="legacy">res/css/legacy.css</file>
     </qresource>
     <!-- VELES END -->
 </RCC>
