@@ -1,7 +1,9 @@
 
 /* Main background color */
 QMainWindow {
-	background-color:#fff;
+	background-image: url(':/images/bg-pattern');
+	color:#fff;
+	background-color: #c4bebe;
 }
 
 /* Main horisontal toolbar with buttons */
@@ -78,26 +80,26 @@ QPushButton:pressed {
 
 
 /* Green button */
-QPushButton#okButton, 
+QPushButton#okButton,
 QPushButton#sendButton {
 	color: #EEE;
 	background-color: #5cb85c;
 	border: 1px solid #4cae4c;
 }
 
-QPushButton#okButton:hover, 
+QPushButton#okButton:hover,
 QPushButton#sendButton:hover {
 	background-color: #4cae4c;
 	border: 1px solid #3c983c;
 }
 
-QPushButton#okButton:pressed, 
+QPushButton#okButton:pressed,
 QPushButton#sendButon:pressed {
 	background-color: #3c983c;
 }
 
 /* Red button */
-QPushButton#cancelButton, 
+QPushButton#cancelButton,
 QPushButton#removeRequestButton,
 QPushButton#clearButton {
 	color: #EEE;
@@ -105,34 +107,34 @@ QPushButton#clearButton {
 	border: 1px solid #c9433f;
 }
 
-QPushButton#cancelButton:hover, 
+QPushButton#cancelButton:hover,
 QPushButton#removeRequestButton:hover,
 QPushButton#clearButton:hover {
 	background-color: #c9433f;
 	border: 1px solid #b9332f;
 }
 
-QPushButton#cancelButton:pressed, 
+QPushButton#cancelButton:pressed,
 QPushButton#removeRequestButton:pressed,
 QPushButton#clearButton:pressed {
 	background-color: #b9332f;
 }
 
 /* Orange button */
-QPushButton#resetButton, 
+QPushButton#resetButton,
 QPushButton#clearButton {
 	color: #EEE;
 	background-color: #f0ad4e;
 	border: 1px solid #eea236;
 }
 
-QPushButton#resetButton:hover, 
+QPushButton#resetButton:hover,
 QPushButton#clearButton:hover {
 	background-color: #eea236;
 	border: 1px solid #de9226;
 }
 
-QPushButton#resetButton:pressed, 
+QPushButton#resetButton:pressed,
 QPushButton#clearButton:pressed {
 	background-color: #de9226;
 }
@@ -142,8 +144,8 @@ QPushButton#openBitcoinConfButton {
 	width: 200px;
 }
 
-QPushButton#warningIcon, 
-QPushButton#labelTransactionsStatus, 
+QPushButton#warningIcon,
+QPushButton#labelTransactionsStatus,
 QPushButton#labelWalletStatus {
 	qproperty-icon: url(":/icons/warning");
 	background-color: transparent;
