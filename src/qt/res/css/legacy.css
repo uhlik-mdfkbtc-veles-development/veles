@@ -1,4 +1,3 @@
-
 /*
 main background : #c4bebe
 tool bar background : #131313
@@ -11,6 +10,7 @@ label background color : rgba(85, 85, 85, 1) / #555
 /*colorrsss */
 WalletFrame {
 	margin: 10px 20px 10px 20px;
+
 }
 
 QMainWindow {
@@ -77,17 +77,19 @@ QMenu::item:selected {
 
 /* Bootstrap style button, default */
 QPushButton {
-	color: #fff;
-	background-color: #131313;
-	border: 0px solid #322c1e;
-	border-radius: 5px;
+	color: #EEE;
+	background-color: #323232;
+	border: 1px solid rgba(19, 19, 19, 0.8);
+	border-radius: 0px;
 	padding: 6px 12px;
 	min-width: 80px;
+	min-height: 24px;
 	qproperty-icon: url(" ");	/* hide icons */
 }
 
 QPushButton:hover {
 	background-color: #444;
+	border: 1px solid rgba(19, 19, 19, 0.8);
 }
 
 QPushButton:pressed {
@@ -99,19 +101,19 @@ QPushButton:pressed {
 QPushButton#okButton,
 QPushButton#sendButton {
 	color: #EEE;
-	background-color: #5cb85c;
-	border: 1px solid #4cae4c;
+	background-color: rgba(92, 184, 92, 0.7);
+	border: 1px solid rgba(19, 19, 19, 0.8);
 }
 
 QPushButton#okButton:hover,
 QPushButton#sendButton:hover {
-	background-color: #4cae4c;
-	border: 1px solid #3c983c;
+	background-color: rgba(76, 174, 76, 0.7);
+	border: 1px solid rgba(19, 19, 19, 0.8);
 }
 
 QPushButton#okButton:pressed,
 QPushButton#sendButon:pressed {
-	background-color: #3c983c;
+	background-color: rgba(60, 152, 60, 0.7);
 }
 
 /* Red button */
@@ -119,40 +121,40 @@ QPushButton#cancelButton,
 QPushButton#removeRequestButton,
 QPushButton#clearButton {
 	color: #EEE;
-	background-color: #d9534f;
-	border: 1px solid #c9433f;
+	background-color: rgba(217, 83, 79, 0.7);
+	border: 1px solid rgba(19, 19, 19, 0.8);
 }
 
 QPushButton#cancelButton:hover,
 QPushButton#removeRequestButton:hover,
 QPushButton#clearButton:hover {
-	background-color: #c9433f;
-	border: 1px solid #b9332f;
+	background-color: rgba(201, 67, 63, 0.7);
+	border: 1px solid rgba(19, 19, 19, 0.8);
 }
 
 QPushButton#cancelButton:pressed,
 QPushButton#removeRequestButton:pressed,
 QPushButton#clearButton:pressed {
-	background-color: #b9332f;
+	background-color: rgba(185, 51, 47, 0.7);
 }
 
 /* Orange button */
 QPushButton#resetButton,
 QPushButton#clearButton {
 	color: #EEE;
-	background-color: rgba(240, 173, 78, 0.6);
-	border: 1px solid rgba(240, 173, 78, 0.6);
+	background-color: rgba(240, 173, 78, 0.7);
+	border: 1px solid rgba(19, 19, 19, 0.8);
 }
 
 QPushButton#resetButton:hover,
 QPushButton#clearButton:hover {
-	background-color: #eea236;
-	border: 1px solid #de9226;
+	background-color: rgba(238, 162, 54, 0.7);
+	border: 1px solid rgba(19, 19, 19, 0.8);
 }
 
 QPushButton#resetButton:pressed,
 QPushButton#clearButton:pressed {
-	background-color: #de9226;
+	background-color: rgba(222, 146, 38, 0.7);
 }
 
 /* Special-style buttons */
@@ -185,23 +187,22 @@ QLabel {
 }
 
 QLabel#whiteTitle {
-	background-color: transparent;
+	background-color: transparent!important;
 	background: transparent;
 	border: 0px;
 }
 
 QLabel#greyTitle {
-	background-color: transparent;
+	background-color: transparent!important;
 	background: transparent;
 	border: 0px;
 	color: #bbb;
-
 }
 
 QLineEdit {
 	background-color: rgba(85, 85, 85, 0.5);
 	color: #fff;
-	border-radius: 5px;
+	border-radius: 3px;
 	min-height: 25px;
 }
 
@@ -210,11 +211,11 @@ QLineEdit {
 												*/
 
 /*Overview page*/
-QWidget#OverviewPage > QFrame {
+
+QWidget#OverviewPage > QWidget {
 	background-color: rgba(30, 30, 30,  0.8);
 	border: 1px solid #322c1e;
-	border-radius: 5px;
-	padding-bottom: 10px;
+	border-radius: 3px;
 }
 
 QObject#line {
@@ -224,14 +225,105 @@ QObject#line {
 	background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0 transparent, stop:0.5 #e4b99c, stop:1 transparent);\n
 }
 
+/* Open URI */
+
+QObject#OpenURIDialog {
+	background-color: #262626;
+}
+
+/* Sing verify message dialog */
+
+QObject#SignVerifyMessageDialog {
+	background-color: #c4bebe;
+	border-radius: 3px;
+	background-image: url(':/images/bg-pattern');
+}
+
+QObject#messageIn_SM {
+	background-color: rgba(85, 85, 85, 0.5);
+	border-radius: 3px;
+}
+
+QObject#messageIn_VM {
+	background-color: rgba(85, 85, 85, 0.5);
+	border-radius: 3px;
+}
+
+/* Passphrase dialog */
+
+QObject#AskPassphraseDialog {
+	background-color: #262626;
+}
+
+/* Options dialog */
+
+QObject#OptionsDialog {
+	background-color: #c4bebe;
+	border-radius: 3px;
+	background-image: url(':/images/bg-pattern')
+}
+
+/* Intro */
+
+QObject#Intro {
+	background-color: #262626;
+}
+
+/* Help dialog */
+
+QObject#HelpMessageDialog {
+	background-color: #c4bebe;
+	border-radius: 3px;
+	background-image: url(':/images/bg-pattern')
+}
+
+QObject#HelpMessageDialog > QFrame {
+	background-color: transparent;
+	border: 0px;
+}
+
+QObject#aboutMessage {
+	background-color: rgba(30, 30, 30,  0.8);
+	border-radius: 3px;
+}
+
+/* Address bookpage */
+
+QObject#AddressBookPage {
+	background-color: rgba(30, 30, 30,  0.8);
+	border-radius: 3px;
+	border: 0px solid #322c1e;
+}
+
+QObject#AddressBookPage > QTableView {
+	background-color: rgba(85, 85, 85, 0.5);
+}
+
+QTableView#tableView > * {
+	background-color: #111111;
+	color: #fff;
+}
+
+QTableView#tableView::item::row {
+    background-color: #393939;
+    font-size: 12px;
+		border-right: 1px solid #262626;
+		border-bottom: 1px solid #262626;
+    color: #fff;
+}
+
+QTableView#tableView::item:selected {
+		background: transparent;
+		border-right: 0px;
+    background-color: rgba(228, 185, 156, 0.5);
+    color: #333;
+}
 /* Send page */
 
 QWidget#SendCoinsDialog > QFrame {
 	background-color: rgba(30, 30, 30,  0.8);
-	color: #fff;
-	border-radius: 5px;
+	border-radius: 3px;
 	border: 0px solid #322c1e;
-	padding-bottom: 10px;
 }
 
 QWidget#SendCoinsDialog > QLabel {
@@ -246,7 +338,7 @@ QObject#SendCoinsDialog > QGridLayout{
 QWidget#frameCoinControl {
 	background-color: rgba(30, 30, 30,  0.8);
 	color: #fff;
-	border-radius: 5px;
+	border-radius: 3px;
 	border: 1px solid #322c1e;
 }
 
@@ -259,33 +351,38 @@ QVBoxLayout {
 	background-color: transparent;
 }
 
+QObject#buttonMinimizeFee {
+	margin-top: 2px;
+	margin-right: 2px;
+}
+
 QObject#payAmount > QWidget {
 	background-color: rgba(85, 85, 85, 0.5);
 	color: #fff;
-	border-radius: 5px;
+	border-radius: 3px;
 	margin-right: 5px;
 	min-height: 25px;
 }
 
 QWidget#SendCoinsEntry {
 	color: #fff;
-	border-radius: 5px;
+	border-radius: 3px;
 	border: 0px solid #322c1e;
 	padding-bottom: 10px;
 }
 
 /* Receive page */
 
-QObject#ReceiveCoinsDialog > QFrame {
+QObject#ReceiveCoinsDialog > QWidget#frame2, QWidget#frame {
 	background-color: rgba(30, 30, 30,  0.8);
 	border: 1px solid #322c1e;
-	border-radius: 5px;
+	border-radius: 3px;
 }
 
 QObject#reqAmount > QWidget {
 	background-color: rgba(85, 85, 85, 0.5);
 	color: #fff;
-	border-radius: 5px;
+	border-radius: 3px;
 	min-height: 25px;
 }
 
@@ -318,20 +415,20 @@ QTableView#recentRequestsView {
 	border: 0px;
 	color: #fff;
 	background-color: rgba(85, 85, 85, 0.5);
-	border-radius: 5px;
+	border-radius: 3px;
 }
 
 QDialog#ReceiveRequestDialog {
 	background-image: url(':/images/bg-pattern');
 	background-color: rgba(55, 55, 55, 0.7);
 	border: 1px solid #322c1e;
-	border-radius: 5px;
+	border-radius: 3px;
 }
 
 QTextEdit#outUri {
 	background-color: rgba(30, 30, 30,  0.8);
 	border: 1px solid #322c1e;
-	border-radius: 5px;
+	border-radius: 3px;
 	color: #fff;
 	font-size: 13px;
 }
@@ -339,7 +436,7 @@ QTextEdit#outUri {
 QRImageWidget {
 	background-color: rgba(30, 30, 30,  0.8);
 	border: 1px solid #322c1e;
-	border-radius: 5px;
+	border-radius: 3px;
 }
 
 /* Transaction page */
@@ -368,30 +465,38 @@ QTableView#transactionView {
 	border: 0px;
 	color: #fff;
 	background-color: rgba(85, 85, 85, 0.5);
-	border-radius: 5px;
+	border-radius: 3px;
 }
 
 /* Masternode page */
 
-QObject#tabWidget {
-	background: unset;
+QWidget#widget {
+	background: transparent;
+	background-color: transparent;
+}
+
+QWidget#tabWidget {
+	background-image:  url(':/images/bg-pattern');
 	background-color: rgba(30, 30, 30,  0.8);
-	border: 0px solid #322c1e;
+	border: 0px;
+	border-radius: 3px;
 	color: #fff;
 }
 
 QObject#tabWidget > QTabBar::tab {
-		background-color: rgba(30, 30, 30, 0.4);
+		background-color: rgba(30, 30, 30, 0.9);
 		padding:0 5px 0 5px;
+		margin-right: 1px;
     color: #fff;
 		border-top: 1px solid #262626;
 		border-left: 1px solid #262626;
 		border-right: 1px solid #262626;
 		height: 30px;
+		min-width: 60px;
 }
 
 QObject#tabWidget > QTabBar::tab::selected{
-	background-color: rgba(30, 30, 30, 0.9);
+	background-color: rgba(30, 30, 30, 0.5);
 }
 
 QObject#tabWidget > QTabBar::tab:hover:!selected {
@@ -430,15 +535,7 @@ QTableView#tableWidgetMyMasternodes::item::row {
 		border-bottom: 1px solid #262626;
     color: #fff;
 }
-/*
-QTableView#tableWidgetMasternodes::item::row {
-    background-color: #393939;
-    font-size: 12px;
-		border-right: 1px solid #262626;
-		border-bottom: 1px solid #262626;
-    color: #fff;
-}
-*/
+
 QTableView#tableWidgetMasternodes::item:selected,
 QTableView#tableWidgetMyMasternodes::item:selected {
 		background: transparent;
@@ -446,20 +543,12 @@ QTableView#tableWidgetMyMasternodes::item:selected {
     background-color: rgba(228, 185, 156, 1);
     color: #333;
 }
-/*
-QTableView#tableWidgetMasternodes::item:selected {
-		background: transparent;
-		border-right: 0px;
-    background-color: rgba(228, 185, 156, 1);
-    color: #333;
-}
-*/
 
 /* Syncing status modal (poping at start wallet) */
 
 QObject#contentWidget {
-	background-color: rgba(38, 38, 38, 0.7);
-	border-radius: 5px;
+	background-color: rgba(38, 38, 38, 0.95);
+	border-radius: 3px;
 	border: 1px solid #322c1e;
 }
 
@@ -490,7 +579,7 @@ QProgressBar {
 	background-color: transparent;
 	color: #fff;
 	border: 0px solid #322c1e;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 QProgressBar::chunk {
@@ -498,7 +587,7 @@ QProgressBar::chunk {
 	color: #fff;
 	border: 1px solid rgba(0, 0, 0, .15);
 	border-top-color: rgba(255, 255, 255, .15);
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 /* Tooltips */
@@ -633,7 +722,7 @@ QScrollBar::add-line:horizontal {
 /*.QTableView {
     background: rgba(85, 85, 85, 0.9);
     border: 1px solid #322c1e;
-		border-radius: 5px;
+		border-radius: 3px;
 }
 
 QTableView::item::row {
@@ -662,7 +751,7 @@ QTableWidget {
     background-color: transparent;
     alternate-background-color: transparent;
     border: 1px solid #322c1e;
-		border-radius: 5px;
+		border-radius: 3px;
 }
 
 QTableWidget:focus,
