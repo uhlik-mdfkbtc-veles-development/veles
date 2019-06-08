@@ -9,9 +9,7 @@
 
 /* Main background color */
 QMainWindow {
-	background-image: url(':/images/bg-pattern');
 	color:#fff;
-	background-color: #c4bebe;
 }
 
 /* Main horisontal toolbar with buttons */
