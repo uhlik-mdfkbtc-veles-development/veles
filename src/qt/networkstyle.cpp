@@ -7,6 +7,8 @@
 
 #include <qt/guiconstants.h>
 
+#include <qt/guiutil.h>
+
 #include <QApplication>
 
 static const struct {
@@ -27,8 +29,11 @@ NetworkStyle::NetworkStyle(const QString &_appName, const int iconColorHueShift,
     appName(_appName),
     titleAddText(qApp->translate("SplashScreen", _titleAddText))
 {
+    // Grab theme from settings
+    QString theme = GUIUtil::getThemeName();
     // load pixmap
     QPixmap pixmap(":/icons/bitcoin");
+    QPixmap img(":/images/" + theme + "/splash");
 
     if(iconColorHueShift != 0 && iconColorSaturationReduction != 0)
     {

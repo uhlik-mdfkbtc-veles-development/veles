@@ -60,9 +60,13 @@
 #include <QTextStream>   // for CSS dumping
 // VELES END
 #include <QThread>
-#include <QUrlQuery>
 #include <QMouseEvent>
 
+#if QT_VERSION < 0x050000
+#include <QUrl>
+#else
+#include <QUrlQuery>
+#endif
 
 #if QT_VERSION >= 0x50200
 #include <QFontDatabase>
@@ -88,7 +92,11 @@ QFont fixedPitchFont()
     return QFontDatabase::systemFont(QFontDatabase::FixedFont);
 #else
     QFont font("Monospace");
+#if QT_VERSION >= 0x040800
     font.setStyleHint(QFont::Monospace);
+#else
+    font.setStyleHint(QFont::TypeWriter);
+#endif
     return font;
 #endif
 }
@@ -116,10 +124,12 @@ void setupAddressWidget(QValidatedLineEdit *widget, QWidget *parent)
     parent->setFocusProxy(widget);
 
     widget->setFont(fixedPitchFont());
+#if QT_VERSION >= 0x040700
     // We don't want translators to use own addresses in translations
     // and this is the only place, where this address is supplied.
     widget->setPlaceholderText(QObject::tr("Enter a Veles address (e.g. %1)").arg(
         QString::fromStdString(DummyAddress(Params()))));
+#endif
     widget->setValidator(new BitcoinAddressEntryValidator(parent));
     widget->setCheckValidator(new BitcoinAddressCheckValidator(parent));
 }
@@ -138,8 +148,13 @@ bool parseBitcoinURI(const QUrl &uri, SendCoinsRecipient *out)
     }
     rv.amount = 0;
 
+#if QT_VERSION < 0x050000
+    QList<QPair<QString, QString> > items = uri.queryItems();
+#else
     QUrlQuery uriQuery(uri);
     QList<QPair<QString, QString> > items = uriQuery.queryItems();
+#endif
+
     for (QList<QPair<QString, QString> >::iterator i = items.begin(); i != items.end(); i++)
     {
         bool fShouldReturnFalse = false;
@@ -225,7 +240,12 @@ bool isDust(interfaces::Node& node, const QString& address, const CAmount& amoun
 
 QString HtmlEscape(const QString& str, bool fMultiLine)
 {
+#if QT_VERSION < 0x050000
+    QString escaped = Qt::escape(str);
+#else
     QString escaped = str.toHtmlEscaped();
+#endif
+
     if(fMultiLine)
     {
         escaped = escaped.replace("\n", "<br>\n");
@@ -266,7 +286,11 @@ QString getSaveFileName(QWidget *parent, const QString &caption, const QString &
     QString myDir;
     if(dir.isEmpty()) // Default to user documents location
     {
+#if QT_VERSION < 0x050000
+        myDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+#else
         myDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#endif
     }
     else
     {
@@ -312,7 +336,11 @@ QString getOpenFileName(QWidget *parent, const QString &caption, const QString &
     QString myDir;
     if(dir.isEmpty()) // Default to user documents location
     {
+#if QT_VERSION < 0x050000
+        myDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+#else
         myDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#endif
     }
     else
     {
@@ -449,7 +477,11 @@ void TableViewLastColumnResizingFixer::disconnectViewHeadersSignals()
 // Refactored here for readability.
 void TableViewLastColumnResizingFixer::setViewHeaderResizeMode(int logicalIndex, QHeaderView::ResizeMode resizeMode)
 {
+#if QT_VERSION < 0x050000
+    tableView->horizontalHeader()->setResizeMode(logicalIndex, resizeMode);
+#else
     tableView->horizontalHeader()->setSectionResizeMode(logicalIndex, resizeMode);
+#endif
 }
 
 void TableViewLastColumnResizingFixer::resizeColumn(int nColumnIndex, int width)
@@ -798,7 +830,57 @@ bool SetStartOnSystemStartup(bool fAutoStart) { return false; }
 
 #endif
 
-// VELES BEGIN
+void migrateQtSettings()
+{
+    // Migration (12.1)
+    QSettings settings;
+    if(!settings.value("fMigrationDone121", false).toBool()) {
+        settings.remove("theme");
+        settings.remove("nWindowPos");
+        settings.remove("nWindowSize");
+        settings.setValue("fMigrationDone121", true);
+    }
+}
+
+void saveWindowGeometry(const QString& strSetting, QWidget *parent)
+{
+    QSettings settings;
+    settings.setValue(strSetting + "Pos", parent->pos());
+    settings.setValue(strSetting + "Size", parent->size());
+}
+
+void restoreWindowGeometry(const QString& strSetting, const QSize& defaultSize, QWidget *parent)
+{
+    QSettings settings;
+    QPoint pos = settings.value(strSetting + "Pos").toPoint();
+    QSize size = settings.value(strSetting + "Size", defaultSize).toSize();
+
+    parent->resize(size);
+    parent->move(pos);
+
+    if ((!pos.x() && !pos.y()) || (QApplication::desktop()->screenNumber(parent) == -1))
+    {
+        QRect screen = QApplication::desktop()->screenGeometry();
+        QPoint defaultPos = screen.center() -
+            QPoint(defaultSize.width() / 2, defaultSize.height() / 2);
+        parent->resize(defaultSize);
+        parent->move(defaultPos);
+    }
+}
+
+// Return name of current UI-theme or default theme if no theme was found
+QString getThemeName()
+{
+    QSettings settings;
+    QString theme = settings.value("theme", "").toString();
+
+    if(!theme.isEmpty()){
+        return theme;
+    }
+    return QString("legacy");
+}
+
+// Open CSS when configured
 QString loadStyleSheet()
 {
     //
@@ -812,20 +894,20 @@ QString loadStyleSheet()
     QString customCssPath = QString::fromStdString(gArgs.GetArg("-loadcss", ""));
     QString dumpCssPath = QString::fromStdString(gArgs.GetArg("-dumpcss", ""));
 
-    if(customCssPath != "") {
+     /*if(customCssPath != "") {
         cssName = customCssPath;                // load custom CSS for dev / testing purposes
+     }*/
 
-    /* Not used yet:
-    } else if(!theme.isEmpty()){
+     if(!theme.isEmpty()) {
         cssName = QString(":/css/") + theme;    // custom style from settings
-    */                             
-    } else {
-        cssName = QString(":/css/light");       // default style
-        settings.setValue("theme", "light");
-    }
-    
+
+     } else {
+        cssName = QString(":/css/legacy");       // default style
+        settings.setValue("theme", "legacy");
+     }
+
     // load the css
-    QFile qFile(cssName);      
+    QFile qFile(cssName);
     if (qFile.open(QFile::ReadOnly)) {
         styleSheet = QLatin1String(qFile.readAll());
     }
@@ -838,7 +920,7 @@ QString loadStyleSheet()
             out << styleSheet;
         }
     }
-        
+
     return styleSheet;
 }
 // VELES END

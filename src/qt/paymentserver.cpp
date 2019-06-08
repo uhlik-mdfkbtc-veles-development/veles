@@ -42,8 +42,12 @@
 #include <QSslSocket>
 #include <QStringList>
 #include <QTextDocument>
-#include <QUrlQuery>
 
+#if QT_VERSION < 0x050000
+#include <QUrl>
+#else
+#include <QUrlQuery>
+#endif
 const int BITCOIN_IPC_CONNECT_TIMEOUT = 1000; // milliseconds
 const QString BITCOIN_IPC_PREFIX("Veles:");
 // BIP70 payment protocol messages
@@ -149,11 +153,13 @@ void PaymentServer::LoadRootCAs(X509_STORE* _store)
             continue;
         }
 
+#if QT_VERSION >= 0x050000
         // Blacklisted certificate
         if (cert.isBlacklisted()) {
             ReportInvalidCertificate(cert);
             continue;
         }
+#endif
         QByteArray certData = cert.toDer();
         const unsigned char *data = (const unsigned char *)certData.data();
 
@@ -398,8 +404,12 @@ void PaymentServer::handleURIOrFile(const QString& s)
 
     if (s.startsWith("bitcoin://", Qt::CaseInsensitive))
     {
+#if QT_VERSION < 0x050000
+        QUrl uri(s);
+#else
         Q_EMIT message(tr("URI handling"), tr("'bitcoin://' is not a valid URI. Use 'bitcoin:' instead."),
             CClientUIInterface::MSG_ERROR);
+#endif            
     }
     else if (s.startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive)) // bitcoin: URI
     {

@@ -799,7 +799,7 @@ bool CMasternodePing::CheckAndUpdate(CMasternode* pmn, bool fFromNewBroadcast, i
         }
 
         // allow pinging node after NSR to recover automatically if not completely expired
-        if (pmn->IsExpired()) { {
+        if (pmn->IsExpired()) {
             LogPrint(BCLog::MASTERNODE, "CMasternodePing::CheckAndUpdate -- masternode is completely expired, new start is required, masternode=%s\n", vin.prevout.ToStringShort());
             return false;
         }

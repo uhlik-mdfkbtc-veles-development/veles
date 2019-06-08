@@ -118,6 +118,8 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     txdelegate(new TxViewDelegate(platformStyle, this))
 {
     ui->setupUi(this);
+    QString theme = GUIUtil::getThemeName();
+
 
     m_balances.balance = -1;
 

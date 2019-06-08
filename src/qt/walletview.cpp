@@ -31,6 +31,7 @@
 #include <QActionGroup>
 #include <QFileDialog>
 #include <QHBoxLayout>
+#include <QLabel>
 #include <QProgressDialog>
 #include <QPushButton>
 #include <QSettings>
@@ -53,7 +54,8 @@ WalletView::WalletView(const PlatformStyle *_platformStyle, QWidget *parent):
     QPushButton *exportButton = new QPushButton(tr("&Export"), this);
     exportButton->setToolTip(tr("Export the data in the current tab to a file"));
     if (platformStyle->getImagesOnButtons()) {
-        exportButton->setIcon(platformStyle->SingleColorIcon(":/icons/export"));
+        QString theme = GUIUtil::getThemeName();
+        exportButton->setIcon(QIcon(":/icons/" + theme + "/export"));
     }
     hbox_buttons->addStretch();
     hbox_buttons->addWidget(exportButton);
