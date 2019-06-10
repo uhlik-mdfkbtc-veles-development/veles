@@ -3,15 +3,15 @@
 /************************** Global Color Codes ********************************/
 /******************************************************************************/
 
-/* backround-color:              rgba(31, 31, 31, 1)  #262626                 */
+/* backround-color:             rgba(31, 31, 31, 1)    #262626                */
 
-/* alternative-backgroud-color:  rgba(85, 85, 85, 1)  #262626                 */
+/* alternative-backgroud-color: rgba(85, 85, 85, 1)    #262626                */
 
-/* veles-orange;                                      #f19b7e                 */
+/* veles-orange;                                       #f19b7e                */
 
-/* veles-brown:                                       #e4b99c                 */
+/* veles-brown:                 rgba(228, 185, 156, 1) #e4b99c                */
 
-/* border-color:                 rgba(17, 17, 17, 1)                          */
+/* border-color:                rgba(17, 17, 17, 1)                           */
 
 /******************************************************************************/
 /******************************************************************************/
@@ -76,6 +76,8 @@ QLineEdit {
     background-color: rgba(85, 85, 85, 0.6);
 }
 
+/***************** Double buttons(etc for setting fee value) ******************/
+
 QAbstractSpinBox {
     padding: 3px 5px 3px 5px;
     font-size: 12px;
@@ -98,6 +100,10 @@ QAbstractSpinBox::up-button {
     padding-left: 5px;
     padding-top: 2px;
 		border-bottom: 1px solid #black;
+		border-top: 2px solid rgba(228, 185, 156, 0.7);
+}
+
+QAbstractSpinBox::up-button:hover {
 		border-top: 2px solid #f19b7e;
 }
 /*
@@ -113,6 +119,10 @@ QAbstractSpinBox::down-button {
 		padding-left: 5px;
     padding-bottom: 2px;
 		border-top: 1px solid black;
+		border-bottom: 2px solid rgba(228, 185, 156, 0.7);
+}
+
+QAbstractSpinBox::down-button:hover {
 		border-bottom: 2px solid #f19b7e;
 }
 /*
@@ -120,6 +130,9 @@ QAbstractSpinBox::down-arrow {
     image: url(':/images/downArrow');
 }
 */
+
+/******** Combo Box (Dropdown buttons for changing VLS mVLS etc..) ************/
+
 QComboBox {
     /* Dropdown Menus */
     background: rgba(85, 85, 85, 0.6);
@@ -148,6 +161,10 @@ QComboBox::drop-down {
 		border-left: 1px solid #262626;
 		border-right: 1px solid #262626;
 		border-top: 1px solid #262626;
+		border-bottom: 2px solid rgba(228, 185, 156, 0.7);
+}
+
+QComboBox::drop-down:hover {
 		border-bottom: 2px solid #f19b7e;
 }
 /*
@@ -156,8 +173,8 @@ QComboBox::down-arrow {
 }
 */
 QComboBox QListView {
-    background-color: #373737;
-    border: 0px solid transparent;
+    background-color: #555;
+    border: 1px solid rgba(17, 17, 17, 0.7);
     padding: 2px;
     color: #eee;
 }
@@ -176,9 +193,11 @@ QComboBox::item:alternate {
 
 QComboBox::item:selected {
 	padding: 2px;
-	background-color: rgba(100, 100, 100, 0.3);
+	background-color: rgba(37, 37, 37, 0.4);
 	color: #fff;
 	font-weight:bold;
+	/*border-top: 1px solid rgba(17, 17, 17, 0.7);
+	border-bottom: 1px solid rgba(17, 17, 17, 0.7);*/
 	border-left: 2px solid #F19B7E;
 }
 
@@ -187,6 +206,48 @@ QComboBox::indicator {
     selection-background-color: transparent;
     color: transparent;
     selection-color: transparent;
+}
+
+/***************************** Checkboxes *************************************/
+
+QCheckBox {
+	background-color: transparent;
+	color: white;
+}
+
+QCheckBox::indicator {
+	border: 1px solid rgba(17, 17, 17, 0.5);
+	background-color: transparent;
+	color: white;
+	border-radius: 50px;
+}
+
+QCheckBox::indicator:unchecked {
+	background-color: #444;
+}
+
+QCheckBox::indicator:unchecked:hover {
+	background-color: rgba(228, 185, 156, 0.7);
+}
+/*
+QCheckBox::indicator:unchecked:pressed {
+
+}
+*/
+QCheckBox::indicator:checked {
+	color: white;
+	background-color: rgba(241, 155, 126, 0.7);
+	border: 1px solid rgba(17, 17, 17, 0.5);
+}
+/*
+QCheckBox::indicator:checked:hover {
+	background-color: black;
+}
+*/
+QCheckBox::indicator:checked:pressed {
+	color: white;
+	background-color: rgba(241, 155, 126, 0.7);
+	border: 1px solid rgba(17, 17, 17, 0.5);
 }
 
 /*********************************TABLES***************************************/
@@ -275,7 +336,8 @@ QWidget {
     /* Remove Annoying Focus Rectangle */
 }
 
-/******************* Main horisontal toolbar with buttons *********************/
+/********************* Main horisontal toolbar with buttons *******************/
+
 QToolBar {
 	background-color: black;
 	border-bottom: 2px solid #1b1810;
@@ -308,6 +370,7 @@ QToolBar > QToolButton:checked {
 }
 
 /************************** Menu on the top ***********************************/
+
 QMenuBar {
 	background-color: black;
 	color: #eee;
@@ -342,20 +405,21 @@ QMenu::item:selected {
 }
 
 /************************ Bootstrap style button, default *********************/
+
 QPushButton {
 	color: #EEE;
-	background-color: rgba(85, 85, 85, 0.9);
+	background-color: #444;
 	border: 1px solid rgba(17, 17, 17, 0.5);
 	border-radius: 0px;
 	padding: 6px 12px;
 	min-width: 80px;
-	min-height: 24px;
+	min-height: 20px;
 	/* hide icons */
 	qproperty-icon: url(" ");
 }
 
 QPushButton:hover {
-	background-color: #444;
+	background-color: rgba(85, 85, 85, 0.9);
 	border: 1px solid rgba(17, 17, 17, 0.5);
 }
 
@@ -540,13 +604,27 @@ QObject#HelpMessageDialog {
 	border-radius: 3px;
 }
 
+QDialog#HelpMessageDialog > QScrollArea * {
+    background-color: transparent;
+		color: #eee;
+}
+
 QObject#HelpMessageDialog > QFrame {
 	background-color: transparent;
 	border: 0px;
+	padding: 20px;
 }
 
-QObject#aboutMessage {
-	background-color: rgba(30, 30, 30,  0.8);
+/************************ Sign Verify Message *********************************/
+
+QObject#messageIn_SM {
+	background-color: rgba(85, 85, 85, 0.5);
+	border-radius: 3px;
+}
+
+QObject#messageIn_VM {
+	background-color: rgba(85, 85, 85, 0.5);
+	border-radius: 3px;
 }
 
 /*****************************Recieve Page*************************************/
