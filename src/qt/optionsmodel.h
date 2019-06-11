@@ -50,7 +50,7 @@ public:
         DisplayUnit,            // BitcoinUnits::Unit
         ThirdPartyTxUrls,       // QString
         Language,               // QString
-        Digits,                 // QString
+        // Digits,                 // QString
         Theme,                  // QString
         CoinControlFeatures,    // bool
         ThreadsScriptVerif,     // int

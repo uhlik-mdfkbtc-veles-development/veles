@@ -727,6 +727,7 @@ https://www.transifex.com/projects/p/dash/</string>
          </item>
         </layout>
        </item>
+      <!-- maybe in future
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_5_Display">
          <item>
@@ -741,6 +742,7 @@ https://www.transifex.com/projects/p/dash/</string>
          </item>
         </layout>
        </item>
+     -->
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_3_Display">
          <item>

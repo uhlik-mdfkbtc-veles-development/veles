@@ -95,8 +95,10 @@ void OptionsModel::Init(bool resetSettings)
     settings.setValue("fShowMasternodesTab", masternodeConfig.getCount());
     //
 
-    if (!settings.contains("digits"))
-        settings.setValue("digits", "2");
+    //if (!settings.contains("digits"))
+    //    settings.setValue("digits", "2");
+
+
     // These are shared with the core or have a command-line parameter
     // and we want command-line parameters to overwrite the GUI settings.
     //
@@ -309,8 +311,8 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
             return nDisplayUnit;
         case ThirdPartyTxUrls:
             return strThirdPartyTxUrls;
-        case Digits:
-            return settings.value("digits");
+        //case Digits:
+        //    return settings.value("digits");
         case Theme:
             return settings.value("theme");
         case Language:
@@ -442,14 +444,14 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
                 setRestartRequired(true);
             }
             break;
-
+      /*
         case Digits:
             if (settings.value("digits") != value) {
                 settings.setValue("digits", value);
                 setRestartRequired(true);
             }
             break;
-
+                                                    */
         case Theme:
             if (settings.value("theme") != value) {
                 settings.setValue("theme", value);
