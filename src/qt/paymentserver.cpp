@@ -47,7 +47,7 @@
 #include <QUrl>
 #else
 #include <QUrlQuery>
-
+#endif
 const int BITCOIN_IPC_CONNECT_TIMEOUT = 1000; // milliseconds
 const QString BITCOIN_IPC_PREFIX("Veles:");
 // BIP70 payment protocol messages
@@ -409,6 +409,7 @@ void PaymentServer::handleURIOrFile(const QString& s)
 #else
         Q_EMIT message(tr("URI handling"), tr("'bitcoin://' is not a valid URI. Use 'bitcoin:' instead."),
             CClientUIInterface::MSG_ERROR);
+#endif            
     }
     else if (s.startsWith(BITCOIN_IPC_PREFIX, Qt::CaseInsensitive)) // bitcoin: URI
     {
