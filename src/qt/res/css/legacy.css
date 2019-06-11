@@ -24,7 +24,7 @@ WalletFrame {
 }
 
 QMainWindow {
-	background-image: url(':/legacy/images/bg-pattern');
+	background-image: url(':/images/legacy/bg-pattern');
 	color:#fff;
 	background-color: #c4bebe;
 }
@@ -109,7 +109,7 @@ QAbstractSpinBox::up-button:hover {
 /*
 QAbstractSpinBox::up-arrow {
 	margin-bottom: 1px;
-    image: url(':/legacy/images/upArrow');
+    image: url(':/images/legacy/upArrow');
 }
 */
 QAbstractSpinBox::down-button {
@@ -127,7 +127,7 @@ QAbstractSpinBox::down-button:hover {
 }
 /*
 QAbstractSpinBox::down-arrow {
-    image: url(':/legacy/images/downArrow');
+    image: url(':/images/legacy/downArrow');
 }
 */
 
@@ -167,7 +167,7 @@ QComboBox::drop-down:hover {
 }
 /*
 QComboBox::down-arrow {
-    border-image: url(':/legacy/images/downArrow') 0 0 0 0 stretch stretch;
+    border-image: url(':/images/legacy/downArrow') 0 0 0 0 stretch stretch;
 }
 */
 QComboBox QListView {
@@ -278,11 +278,11 @@ QHeaderView::section:hover {
 }
 /*
 QHeaderView::down-arrow {
-    image: url(':/legacy/images/downArrow');
+    image: url(':/images/legacy/downArrow');
 }
 
 QHeaderView::up-arrow {
-    image: url(':/legacy/images/downArrow');
+    image: url(':/images/legacy/downArrow');
 }
 */
 QHeaderView::section:last {
@@ -498,7 +498,7 @@ QPushButton#openBitcoinConfButton {
 QPushButton#warningIcon,
 QPushButton#labelTransactionsStatus,
 QPushButton#labelWalletStatus {
-	qproperty-icon: url(":/legacy/icons/warning");
+	qproperty-icon: url(":/icons/legacy/warning");
 	background-color: transparent;
 	border: none;
 }
@@ -517,7 +517,7 @@ QPushButton#labelTransactionsStatus {
 /******************************* Dialog Boxes *********************************/
 
 QDialog {
-	background-image: url(':/legacy/images/bg-pattern');
+	background-image: url(':/images/legacy/bg-pattern');
 	background-color: #c4bebe;
 }
 
@@ -803,19 +803,19 @@ QScrollBar:right-arrow {
 }
 /*
 QScrollBar:up-arrow {
-    background-image: url(':/legacy/images/upArrow');
+    background-image: url(':/images/legacy/upArrow');
 }
 
 QScrollBar:down-arrow {
-    background-image: url(':/legacy/images/downArrow');
+    background-image: url(':/images/legacy/downArrow');
 }
 
 QScrollBar:left-arrow {
-    background-image: url(':/legacy/images/leftArrow');
+    background-image: url(':/images/legacy/leftArrow');
 }
 
 QScrollBar:right-arrow {
-    background-image: url(':/legacy/images/rightArrow');
+    background-image: url(':/images/legacy/rightArrow');
 }
 */
 QScrollBar::sub-line:vertical {

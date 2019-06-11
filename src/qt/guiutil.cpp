@@ -868,7 +868,7 @@ QString loadStyleSheet()
 
      if(!theme.isEmpty()) {
         cssName = QString(":/css/") + theme;    // custom style from settings
-
+ 
      } else {
         cssName = QString(":/css/legacy");       // default style
         settings.setValue("theme", "legacy");
