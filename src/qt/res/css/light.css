@@ -14,7 +14,7 @@ QMainWindow {
 
 /* Main horisontal toolbar with buttons */
 QToolBar {
-    background-image: url(':/images/header_bg');
+    background-image: url(':/light/images/header_bg');
 	border:0px solid #000;
 	padding: 5px 0px 0px;
 	margin:0;
@@ -153,7 +153,7 @@ QPushButton#openBitcoinConfButton {
 QPushButton#warningIcon,
 QPushButton#labelTransactionsStatus,
 QPushButton#labelWalletStatus {
-	qproperty-icon: url(":/icons/warning");
+	qproperty-icon: url(":/light/icons/warning");
 	background-color: transparent;
 	border: none;
 }

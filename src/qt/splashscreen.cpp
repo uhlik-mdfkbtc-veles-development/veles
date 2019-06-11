@@ -8,7 +8,7 @@
 #endif
 
 #include <qt/splashscreen.h>
-
+#include <qt/guiutil.h>
 #include <qt/networkstyle.h>
 
 #include <clientversion.h>
@@ -28,6 +28,14 @@
 SplashScreen::SplashScreen(interfaces::Node& node, Qt::WindowFlags f, const NetworkStyle *networkStyle) :
     QWidget(0, f), curAlignment(0), m_node(node)
 {
+
+    // transparent background
+    setAttribute(Qt::WA_TranslucentBackground);
+    setStyleSheet("background:transparent;");
+
+    // no window decorations
+    setWindowFlags(Qt::FramelessWindowHint);
+
     // set reference point, paddings
     int paddingRight            = 50;
     int paddingTop              = 50;
@@ -57,14 +65,15 @@ SplashScreen::SplashScreen(interfaces::Node& node, Qt::WindowFlags f, const Netw
     QRect splashRect(QPoint(0,0), QSize(480,320));
     QString titleText       = tr(PACKAGE_NAME) + " GUI";
     QString versionText     = QString::fromStdString(FormatFullVersion()).split("-").value(0) + " \"" + CLIENT_VERSION_CODENAME + "\"";
-    QString splashScreenPath = ":/images/splash";
+    // networkstyle.cpp can't (yet) read themes, so we do it here to get the correct Splash-screen
+    QString splashScreenPath = ":/images/" + GUIUtil::getThemeName() + "/splash";
 
     if (!CLIENT_VERSION_IS_RELEASE)
-        splashScreenPath = ":/images/splash_prerelease";
+        splashScreenPath = ":/images/" + GUIUtil::getThemeName() + "/splash_prerelease";
     if(gArgs.GetBoolArg("-regtest", false))
-        splashScreenPath = ":/images/splash_testnet";
+        splashScreenPath = ":/images/" + GUIUtil::getThemeName() + "/splash_testnet";
     if(gArgs.GetBoolArg("-testnet", false))
-        splashScreenPath = ":/images/splash_testnet";
+        splashScreenPath = ":/images/" + GUIUtil::getThemeName() + "/splash_testnet";
 
     // replace for copyright sign
     copyrightText.replace("Copyright (C)", QChar(0x00A9));
@@ -81,7 +90,7 @@ SplashScreen::SplashScreen(interfaces::Node& node, Qt::WindowFlags f, const Netw
 #endif
 
     QPainter pixPaint(&pixmap);
-    pixPaint.setPen(QColor(30,30,30));  
+    pixPaint.setPen(QColor(30,30,30));
 
     // draw a slightly radial gradient
     QRadialGradient gradient(QPoint(0,0), splashSize.width()/devicePixelRatio);
@@ -132,7 +141,7 @@ SplashScreen::SplashScreen(interfaces::Node& node, Qt::WindowFlags f, const Netw
 
     // draw copyright stuff
     {
-        pixPaint.setPen(QColor(100,100,100)); 
+        pixPaint.setPen(QColor(100,100,100));
         pixPaint.setFont(QFont(font, 15 * fontFactor));
         const int x = pixmap.width() / devicePixelRatio - titleCopyrightWidth - paddingRightCopyright;
         const int y = paddingTop + titleCopyrightVSpace;
