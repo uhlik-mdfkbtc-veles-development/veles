@@ -239,6 +239,11 @@
     <qresource prefix="/fonts">
         <file alias="jura">res/fonts/jura.ttf</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file alias="bitcoin">res/icons/veles.png</file>
+        <file alias="prompticon">res/icons/chevron.png</file>
+        <file alias="warning">res/icons/warning.png</file>
+    </qresource>
     <qresource prefix="/css">
         <file alias="dark">res/css/dark.css</file>
         <file alias="light">res/css/light.css</file>

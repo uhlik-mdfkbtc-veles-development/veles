@@ -1,11 +1,14 @@
-/**
- * The Veles Core Qt GUI default stylesheet.
+/******************************************************************************/
+/******************************************************************************/
+/*
+ * The Veles Core Qt GUI light stylesheet.
  *
  * Copyright (c) 2018-2019 The Veles Core developers
  *
  * Distributed under the MIT software license, see the accompanying
  * file COPYING or http://www.opensource.org/licenses/mit-license.php.
  */
+/******************************************************************************/
 
 /* Main background color */
 QMainWindow {
@@ -169,7 +172,6 @@ QPushButton#labelTransactionsStatus {
 	border: none;
 }
 
-
 /* Per page stuff */
 QWidget#SendCoinsDialog QFrame * {
 	background-color: #fff;
@@ -182,49 +184,27 @@ QWidget#OverviewPage > QFrame {
 }
 
 
-/* Status bar and proggress bar */
-QStatusBar * {
-    background-color: #131313;
-    color: #bbb;
-}
-
-QStatusBar {
-    background-color: #131313;
-    color: #bbb;
-}
-
-QStatusBar QLabel {
-    margin-left: 10px;
-    color: #bbb;
-}
-
-QProgressBar {
-	background-color: #333;
-	color: #fff;
-    border-radius: 3px;
-}
-
-QProgressBar::chunk {
-	background: #5cb85c;
-	color: #fff;
-	border: 1px solid rgba(0, 0, 0, .15);
-	border-top-color: rgba(255, 255, 255, .15);
-    border-radius: 3px;
-}
-
-/* Tooltips */
-QToolTip {
-    background-color: #131313;
-    color: #bbb;
-    padding: 5px;
-}
-
-
 /*
-Might be useful:
+useful
 
-	qproperty-toolButtonStyle: ToolButtonIconOnly;
+
+QMenu {
+	background-color:#f8f6f6;
+}
+
+QMenu::item {
+	color:#333;
+}
+
+QMenu::item:selected {
+	background-color:#a0826f;
+	color:#333;
+}
+
+qproperty-toolButtonStyle: ToolButtonIconOnly;
+
     background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
     	stop: 0 #e3b89b, stop: 1 #f3d8bb);
+
 
 */
