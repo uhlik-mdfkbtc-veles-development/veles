@@ -41,10 +41,10 @@ MasternodeList::MasternodeList(const PlatformStyle *platformStyle, QWidget *pare
     ui->setupUi(this);
 
     ui->startButton->setEnabled(false);
-
-    int columnAliasWidth = 100;
-    int columnAddressWidth = 200;
-    int columnProtocolWidth = 60;
+    /*edit values to fit in the window without horizontal scrollbar need old values stay in comment*/
+    int columnAliasWidth = 70; //100
+    int columnAddressWidth = 160; //200
+    int columnProtocolWidth = 90; // 60
     int columnStatusWidth = 80;
     int columnActiveWidth = 130;
     int columnLastSeenWidth = 130;
