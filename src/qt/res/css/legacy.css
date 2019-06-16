@@ -115,12 +115,14 @@ QAbstractSpinBox::up-button {
 QAbstractSpinBox::up-button:hover {
 		border-top: 2px solid #f19b7e;
 }
-/*
+
 QAbstractSpinBox::up-arrow {
-	margin-bottom: 1px;
-    image: url(':/images/legacy/upArrow');
+		max-height: 15px;
+		margin-bottom: 1px;
+		margin-right: 3px;
+    image: url(':/icons/legacy/smallUpArrow') 0 0 0 0 stretch stretch;
 }
-*/
+
 QAbstractSpinBox::down-button {
     width: 12px;
     background-color: #323232;
@@ -134,11 +136,14 @@ QAbstractSpinBox::down-button {
 QAbstractSpinBox::down-button:hover {
 		border-bottom: 2px solid #f19b7e;
 }
-/*
+
 QAbstractSpinBox::down-arrow {
-    image: url(':/images/legacy/downArrow');
+		max-height: 15px;
+		margin-right: 3px;
+		margin-top: 1px;
+    image: url(':/icons/legacy/smallDownArrow') 0 0 0 0 stretch stretch;
 }
-*/
+
 
 /******** Combo Box (Dropdown buttons for changing VLS mVLS etc..) ************/
 
@@ -174,11 +179,11 @@ QComboBox::drop-down {
 QComboBox::drop-down:hover {
 		border-bottom: 2px solid #f19b7e;
 }
-/*
+
 QComboBox::down-arrow {
-    border-image: url(':/images/legacy/downArrow') 0 0 0 0 stretch stretch;
+    border-image: url(':/icons/legacy/smallDownArrow') 0 0 0 0 stretch stretch;
 }
-*/
+
 QComboBox QListView {
     background-color: #555;
     border: 1px solid rgba(17, 17, 17, 0.7);
@@ -234,7 +239,7 @@ QCheckBox::indicator:unchecked {
 }
 
 QCheckBox::indicator:unchecked:hover {
-	background-color: rgba(228, 185, 156, 0.7);
+	background-color: rgba(241, 155, 126, 0.7);
 }
 /*
 QCheckBox::indicator:unchecked:pressed {
@@ -243,7 +248,7 @@ QCheckBox::indicator:unchecked:pressed {
 */
 QCheckBox::indicator:checked {
 	color: white;
-	background-color: rgba(241, 155, 126, 0.7);
+	background-color: rgba(228, 185, 156, 0.7);
 	border: 1px solid rgba(17, 17, 17, 0.5);
 }
 /*
@@ -285,15 +290,15 @@ QHeaderView::section {
 QHeaderView::section:hover {
 		border-bottom: 2px solid rgba(241, 155, 126, 0.7);
 }
-/*
+*/
 QHeaderView::down-arrow {
-    image: url(':/images/legacy/downArrow');
+    image: url(':/icons/legacy/smallDownArrow');
 }
 
 QHeaderView::up-arrow {
-    image: url(':/images/legacy/downArrow');
+    image: url(':/icons/legacy/smallUpArrow');
 }
-*/
+
 QHeaderView::section:last {
     border-right: 0;
 }
@@ -389,6 +394,7 @@ QMenuBar {
 }
 
 QMenuBar::item {
+
 	background-color:transparent;
 }
 
@@ -396,12 +402,12 @@ QMenuBar::item:selected {
 	background-color: rgba(100, 100, 100, 0.3);
 	color: #eee;
 	font-weight:bold;
-	border-left: 2px solid #F19B7E;
+	border-top: 2px solid #F19B7E;
 }
 
 QMenu {
 	color: #eee;
-  background-color: black;
+  background-color: rgba(31, 31, 31, 1);
 }
 
 QMenu::item {
@@ -411,8 +417,6 @@ QMenu::item {
 QMenu::item:selected {
 	background-color: rgba(100, 100, 100, 0.3);
 	color: #fff;
-	padding-right: 2px;
-	border-left: 2px solid #F19B7E;
 }
 
 /************************ Bootstrap style button, default *********************/
@@ -582,6 +586,24 @@ QWidget#SendCoinsDialog > QFrame {
 	background-color: rgba(30, 30, 30,  0.5);
 	border-radius: 3px;
 	border: 1px solid rgba(17, 17, 17, 0.5);
+}
+
+QObject#addressBookButton {
+	background-color: transparent;
+	height: 25px;
+	border: 1px solid rgba(17, 17, 17, 0.8);
+}
+
+QObject#pasteButton {
+	background-color: transparent;
+	height: 25px;
+	border: 1px solid rgba(17, 17, 17, 0.8);
+}
+
+QObject#deleteButton {
+	background-color: transparent;
+	height: 25px;
+	border: 1px solid rgba(17, 17, 17, 0.8);
 }
 
 QObject#buttonMinimizeFee {

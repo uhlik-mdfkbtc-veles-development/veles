@@ -148,6 +148,8 @@
         <!-- Dash -->
         <file alias="masternodes">res/icons/legacy/masternodes.png</file>
         <!--      -->
+        <file alias="smallUpArrow">res/icons/legacy/small_up_button_arrow.png</file>
+        <file alias="smallDownArrow">res/icons/legacy/small_down_button_arrow.png</file>
         <file alias="overview">res/icons/legacy/overview.png</file>
         <file alias="export">res/icons/legacy/export.png</file>
         <file alias="synced">res/icons/legacy/synced.png</file>
