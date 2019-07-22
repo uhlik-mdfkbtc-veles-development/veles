@@ -274,7 +274,9 @@ private:
     interfaces::WalletBalances m_cached_balances;
     EncryptionStatus cachedEncryptionStatus;
     int cachedNumBlocks;
-
+    // PRIVATESEND START
+    int cachedPrivateSendRounds;
+    // PRIVATESEND END
     QTimer *pollTimer;
 
     void subscribeToCoreSignals();

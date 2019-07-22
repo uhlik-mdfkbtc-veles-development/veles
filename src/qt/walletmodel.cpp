@@ -25,6 +25,9 @@
 #include <util/system.h> // for GetBoolArg
 #include <wallet/coincontrol.h>
 #include <wallet/wallet.h>
+// PRIVATESEND START
+#include "<privatesend-client.h>"
+// PRIVATESEND END
 
 #include <stdint.h>
 
@@ -40,6 +43,9 @@ WalletModel::WalletModel(std::unique_ptr<interfaces::Wallet> wallet, interfaces:
     recentRequestsTableModel(nullptr),
     cachedEncryptionStatus(Unencrypted),
     cachedNumBlocks(0)
+    // PRIVATESEND START
+    cachedPrivateSendRounds(0)
+    // PRIVATESEND END
 {
     fHaveWatchOnly = m_wallet->haveWatchOnly();
     addressTableModel = new AddressTableModel(this);
@@ -79,14 +85,16 @@ void WalletModel::pollBalanceChanged()
     if (!m_wallet->tryGetBalances(new_balances, numBlocks)) {
         return;
     }
-
-    if(fForceCheckBalanceChanged || m_node.getNumBlocks() != cachedNumBlocks)
+    // PRIVATESEND START
+    // if(fForceCheckBalanceChanged || m_node.getNumBlocks() != cachedNumBlocks
+    if(fForceCheckBalanceChanged || m_node.getNumBlocks() != cachedNumBlocks || privateSendClient.nPrivateSendRounds != cachedPrivateSendRounds))
     {
         fForceCheckBalanceChanged = false;
 
         // Balance and number of transactions might have changed
         cachedNumBlocks = m_node.getNumBlocks();
-
+        cachedPrivateSendRounds = privateSendClient.nPrivateSendRounds;
+    // PRIVATESEND END
         checkBalanceChanged(new_balances);
         if(transactionTableModel)
             transactionTableModel->updateConfirmations();

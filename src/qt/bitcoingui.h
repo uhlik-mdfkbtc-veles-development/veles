@@ -157,6 +157,7 @@ private:
     // Dash
     QAction *openMNConfEditorAction = nullptr;
     //
+    QAction *showPrivateSendHelpAction = nullptr; //PRIVATESEND
     QAction* openAction = nullptr;
     QAction* showHelpMessageAction = nullptr;
     QAction* m_open_wallet_action{nullptr};
@@ -323,6 +324,8 @@ public Q_SLOTS:
 
     /** Show help message dialog */
     void showHelpMessageClicked();
+    /** Show PrivateSend help message dialog */
+    void showPrivateSendHelpClicked(); // PRIVATESEND
 #ifndef Q_OS_MAC
     /** Handle tray icon clicked */
     void trayIconActivated(QSystemTrayIcon::ActivationReason reason);

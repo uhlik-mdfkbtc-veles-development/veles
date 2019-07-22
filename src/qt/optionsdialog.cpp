@@ -16,6 +16,7 @@
 #include <qt/guiutil.h>
 #include <qt/optionsmodel.h>
 
+#include <privatesend-client.h> //PRIVATESEND
 #include <interfaces/node.h>
 #include <validation.h> // for DEFAULT_SCRIPTCHECK_THREADS and MAX_SCRIPTCHECK_THREADS
 #include <netbase.h>
@@ -239,7 +240,13 @@ void OptionsDialog::setMapper()
     // Dash
     mapper->addMapping(ui->showMasternodesTab, OptionsModel::ShowMasternodesTab);
     //
-
+    // PRIVATESEND START
+    mapper->addMapping(ui->showPrivateSendPopups, OptionsModel::ShowPrivateSendPopups);
+    //mapper->addMapping(ui->lowKeysWarning, OptionsModel::LowKeysWarning);
+    mapper->addMapping(ui->privateSendMultiSession, OptionsModel::PrivateSendMultiSession);
+    mapper->addMapping(ui->privateSendRounds, OptionsModel::PrivateSendRounds);
+    mapper->addMapping(ui->privateSendAmount, OptionsModel::PrivateSendAmount);
+    // PRIVATESEND END
     /* Network */
     mapper->addMapping(ui->mapPortUpnp, OptionsModel::MapPortUPnP);
     mapper->addMapping(ui->allowIncoming, OptionsModel::Listen);
@@ -308,6 +315,13 @@ void OptionsDialog::on_openBitcoinConfButton_clicked()
 void OptionsDialog::on_okButton_clicked()
 {
     mapper->submit();
+    // PRIVATESEND START
+#ifdef ENABLE_WALLET
+    privateSendClient.nCachedNumBlocks = std::numeric_limits<int>::max();
+    //if(walletMain)
+        //walletMain->MarkDirty();
+#endif // ENABLE_WALLET
+    // PRIVATESEND END
     accept();
     updateDefaultProxyNets();
 }

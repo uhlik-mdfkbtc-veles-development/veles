@@ -16,6 +16,7 @@
 #include <instantx.h>
 #include <keepass.h>
 //
+#include <privatesend-client.h> // PRIVATESEND
 #include <validation.h>
 #include <key_io.h>
 #include <net.h>
@@ -1463,7 +1464,7 @@ static void ListTransactions(interfaces::Chain::Lock& locked_chain, CWallet* con
                 entry.pushKV("involvesWatchonly", true);
             }
             MaybePushAddress(entry, s.destination);
-            entry.pushKV("category", "send");
+            entry.pushKV("category", (it != wtx.mapValue.end() && it->second == "1") ? "privatesend" : "send"));
             entry.pushKV("amount", ValueFromAmount(-s.amount));
             if (pwallet->mapAddressBook.count(s.destination)) {
                 entry.pushKV("label", pwallet->mapAddressBook[s.destination].name);
@@ -2062,6 +2063,10 @@ static UniValue walletpassphrase(const JSONRPCRequest& request)
                 RPCExamples{
             "\nUnlock the wallet for 60 seconds\n"
             + HelpExampleCli("walletpassphrase", "\"my pass phrase\" 60") +
+            // PRIVATESEND START
+            "\nUnlock the wallet for 60 seconds but allow PrivateSend mixing only\n"
+            + HelpExampleCli("walletpassphrase", "\"my pass phrase\" 60 true") +
+            //PRIVATESEND END
             "\nLock the wallet again (before 60 seconds)\n"
             + HelpExampleCli("walletlock", "") +
             "\nAs a JSON-RPC call\n"
@@ -2511,6 +2516,69 @@ static UniValue settxfee(const JSONRPCRequest& request)
     return true;
 }
 
+// PRIVATESEND START
+UniValue setprivatesendrounds(const JSONRPCRequest& request)
+{
+    CWallet* const pwallet = GetWalletForJSONRPCRequest(request);
+    //std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!EnsureWalletIsAvailable(wallet, request.fHelp))
+        return NullUniValue;
+
+    if (request.fHelp || request.params.size() != 1)
+        throw std::runtime_error(
+            RPCHelpMan{"setprivatesendrounds",
+                "\nSet the number of rounds for PrivateSend mixing.\n",
+                {
+                    {"rounds", RPCArg::Type::NUM, RPCArg::Optional::NO, "The default number of rounds is " + DEFAULT_PRIVATESEND_ROUNDS + " Cannot be more than " + MAX_PRIVATESEND_ROUNDS + " nor less than " + MIN_PRIVATESEND_ROUNDS +},
+                },
+                RPCResult{},
+                RPCExamples{
+                    HelpExampleCli("setprivatesendrounds", "4")
+                + HelpExampleRpc("setprivatesendrounds", "16")
+                },
+           }.ToString());
+
+    int nRounds = request.params[0].get_int();
+
+    if (nRounds > MAX_PRIVATESEND_ROUNDS || nRounds < MIN_PRIVATESEND_ROUNDS)
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid number of rounds");
+
+    privateSendClient.nPrivateSendRounds = nRounds;
+
+    return NullUniValue;
+}
+
+UniValue setprivatesendamount(const JSONRPCRequest& request)
+{
+    //CWallet* const pwallet = GetWalletForJSONRPCRequest(request);
+    std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
+    if (!EnsureWalletIsAvailable(wallet, request.fHelp))
+        return NullUniValue;
+
+    if (request.fHelp || request.params.size() != 1)
+        throw std::runtime_error(
+            RPCHelpMan{"setprivatesendamount",
+                "\nSet the goal amount in " + CURRENCY_UNIT + " for PrivateSend mixing.\n",
+                {
+                  {"amount", RPCArg::Type::NUM, RPCArg::Optional::NO, "The default amount is " + DEFAULT_PRIVATESEND_AMOUNT + " Cannot be more than " + MAX_PRIVATESEND_AMOUNT + " nor less than " + MIN_PRIVATESEND_AMOUNT +},
+                },
+                RPCResult{},
+                RPCExamples{
+                    HelpExampleCli("setprivatesendamount", "500")
+                + HelpExampleRpc("setprivatesendamount", "208")
+                },
+              }.ToString());
+
+    int nAmount = request.params[0].get_int();
+
+    if (nAmount > MAX_PRIVATESEND_AMOUNT || nAmount < MIN_PRIVATESEND_AMOUNT)
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "Invalid amount of " + CURRENCY_UNIT + " as mixing goal amount");
+
+    privateSendClient.nPrivateSendAmount = nAmount;
+
+    return NullUniValue;
+}
+//PRIVATESEND END
 static UniValue getwalletinfo(const JSONRPCRequest& request)
 {
     std::shared_ptr<CWallet> const wallet = GetWalletForJSONRPCRequest(request);
@@ -2529,6 +2597,7 @@ static UniValue getwalletinfo(const JSONRPCRequest& request)
             "{\n"
             "  \"walletname\": xxxxx,               (string) the wallet name\n"
             "  \"walletversion\": xxxxx,            (numeric) the wallet version\n"
+            "  \"privatesend_balance\": xxxxxx,     (numeric) the anonymized dash balance of the wallet in " + CURRENCY_UNIT + "\n" // PRIVATESEND
             "  \"balance\": xxxxxxx,                (numeric) the total confirmed balance of the wallet in " + CURRENCY_UNIT + "\n"
             "  \"unconfirmed_balance\": xxx,        (numeric) the total unconfirmed balance of the wallet in " + CURRENCY_UNIT + "\n"
             "  \"immature_balance\": xxxxxx,        (numeric) the total immature balance of the wallet in " + CURRENCY_UNIT + "\n"
@@ -2561,6 +2630,9 @@ static UniValue getwalletinfo(const JSONRPCRequest& request)
     obj.pushKV("walletname", pwallet->GetName());
     obj.pushKV("walletversion", pwallet->GetVersion());
     obj.pushKV("balance",       ValueFromAmount(pwallet->GetBalance()));
+    // PRIVATESEND START
+    obj.pushKV("privatesend_balance",       ValueFromAmount(pwallet->GetAnonymizedBalance()));
+    // PRIVATESEND END
     obj.pushKV("unconfirmed_balance", ValueFromAmount(pwallet->GetUnconfirmedBalance()));
     obj.pushKV("immature_balance",    ValueFromAmount(pwallet->GetImmatureBalance()));
     obj.pushKV("txcount",       (int)pwallet->mapWallet.size());
@@ -3092,6 +3164,9 @@ static UniValue listunspent(const JSONRPCRequest& request)
             entry.pushKV("desc", descriptor->ToString());
         }
         entry.pushKV("safe", out.fSafe);
+        // PRIVATESEND START
+        entry.pushKV("ps_rounds", pwallet->GetRealOutpointPrivateSendRounds(COutPoint(out.tx->GetHash(), out.i)));
+        // PRIVATESEND END
         results.push_back(entry);
     }
 
@@ -4379,6 +4454,10 @@ static const CRPCCommand commands[] =
     { "wallet",             "sethdseed",                        &sethdseed,                     {"newkeypool","seed"} },
     { "wallet",             "setlabel",                         &setlabel,                      {"address","label"} },
     { "wallet",             "settxfee",                         &settxfee,                      {"amount"} },
+    // PRIVATESEND START
+    { "wallet",             "setprivatesendrounds",             &setprivatesendrounds,          {"rounds"} },
+    { "wallet",             "setprivatesendamount",             &setprivatesendamount,          {"amount"} },
+    // PRIVATESEND END
     { "wallet",             "signmessage",                      &signmessage,                   {"address","message"} },
     { "wallet",             "signrawtransactionwithwallet",     &signrawtransactionwithwallet,  {"hexstring","prevtxs","sighashtype"} },
     { "wallet",             "unloadwallet",                     &unloadwallet,                  {"wallet_name"} },

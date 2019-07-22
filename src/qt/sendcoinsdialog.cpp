@@ -29,6 +29,10 @@
 #include <policy/fees.h>
 #include <wallet/fees.h>
 
+// PRIVATESEND START
+#include <privatesend.h>
+// PRIVATESEND END
+
 #include <QFontMetrics>
 #include <QScrollBar>
 #include <QSettings>
@@ -96,6 +100,25 @@ SendCoinsDialog::SendCoinsDialog(const PlatformStyle *_platformStyle, QWidget *p
     connect(ui->pushButtonCoinControl, &QPushButton::clicked, this, &SendCoinsDialog::coinControlButtonClicked);
     connect(ui->checkBoxCoinControlChange, &QCheckBox::stateChanged, this, &SendCoinsDialog::coinControlChangeChecked);
     connect(ui->lineEditCoinControlChange, &QValidatedLineEdit::textEdited, this, &SendCoinsDialog::coinControlChangeEdited);
+
+    // PRIVATESEND START
+    QSettings settings;
+    if (!settings.contains("bUseDarkSend"))
+        settings.setValue("bUseDarkSend", false);
+
+    bool fUsePrivateSend = settings.value("bUseDarkSend").toBool();
+    if(fLiteMode) {
+        ui->checkUsePrivateSend->setChecked(false);
+        ui->checkUsePrivateSend->setVisible(false);
+        CoinControlDialog::coinControl->fUsePrivateSend = false;
+    }
+    else{
+        ui->checkUsePrivateSend->setChecked(fUsePrivateSend);
+        CoinControlDialog::coinControl->fUsePrivateSend = fUsePrivateSend;
+    }
+
+    connect(ui->checkUsePrivateSend, SIGNAL(stateChanged ( int )), this, SLOT(updateDisplayUnit()));
+    // PRIVATESEND END
 
     // Coin Control: clipboard actions
     QAction *clipboardQuantityAction = new QAction(tr("Copy quantity"), this);
@@ -255,6 +278,47 @@ void SendCoinsDialog::on_sendButton_clicked()
         return;
     }
 
+    QString strFunds = tr("using") + " <b>" + tr("anonymous funds") + "</b>";
+    QString strFee = "";
+
+    if(ui->checkUsePrivateSend->isChecked()) {
+        strFunds = tr("using") + " <b>" + tr("anonymous funds") + "</b>";
+        QString strNearestAmount(
+            BitcoinUnits::formatWithUnit(
+                model->getOptionsModel()->getDisplayUnit(), CPrivateSend::GetSmallestDenomination()));
+        strFee = QString(tr(
+            "(privatesend requires this amount to be rounded up to the nearest %1)."
+        ).arg(strNearestAmount));
+    } else {
+        strFunds = tr("using") + " <b>" + tr("any available funds (not anonymous)") + "</b>";
+    }
+
+    for (SendCoinsRecipient& rcp : recipients) {
+        rcp.inputType = ui->checkUsePrivateSend->isChecked() ? ONLY_DENOMINATED : ALL_COINS;
+    }
+
+    fNewRecipientAllowed = false;
+    // request unlock only if was locked or unlocked for mixing:
+    // this way we let users unlock by walletpassphrase or by menu
+    // and make many transactions while unlocking through this dialog
+    // will call relock
+    WalletModel::EncryptionStatus encStatus = model->getEncryptionStatus();
+    if(encStatus == model->Locked || encStatus == model->UnlockedForMixingOnly)
+    {
+        WalletModel::UnlockContext ctx(model->requestUnlock());
+        if(!ctx.isValid())
+        {
+            // Unlock wallet was cancelled
+            fNewRecipientAllowed = true;
+            return;
+        }
+        send(recipients, strFee, strFunds);
+        return;
+    }
+    // already unlocked or not encrypted at all
+    send(recipients, strFee, strFunds);
+}
+// PRIVATESEND END
     // Dash
     // FXTC TODO: privatesend and instantsend checkbox must be added to GUI! next two rows are just temporary placeholder!
     recipients[0].inputType = ALL_COINS;
@@ -590,8 +654,18 @@ bool SendCoinsDialog::handlePaymentRequest(const SendCoinsRecipient &rv)
 
 void SendCoinsDialog::setBalance(const interfaces::WalletBalances& balances)
 {
+    // PRIVATESEND START
     if(model && model->getOptionsModel())
     {
+      uint64_t bal = 0;
+        QSettings settings;
+        settings.setValue("bUseDarkSend", ui->checkUsePrivateSend->isChecked());
+      if(ui->checkUsePrivateSend->isChecked()) {
+        bal = anonymizedBalance;
+      } else {
+        bal = balance;
+      }
+    // PRIVATESEND END
         ui->labelBalance->setText(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), balances.balance));
     }
 }
@@ -600,6 +674,10 @@ void SendCoinsDialog::updateDisplayUnit()
 {
     setBalance(model->wallet().getBalances());
     ui->customFee->setDisplayUnit(model->getOptionsModel()->getDisplayUnit());
+    // PRIVATESEND START
+    CoinControlDialog::coinControl->fUsePrivateSend = ui->checkUsePrivateSend->isChecked();
+    coinControlUpdateLabels();
+    // PRIVATESEND END
     updateSmartFeeLabel();
 }
 
@@ -922,6 +1000,8 @@ void SendCoinsDialog::coinControlUpdateLabels()
                 CoinControlDialog::fSubtractFeeFromAmount = true;
         }
     }
+
+    ui->checkUsePrivateSend->setChecked(CoinControlDialog::coinControl->fUsePrivateSend); // PRIVATESEND
 
     if (CoinControlDialog::coinControl()->HasSelected())
     {
