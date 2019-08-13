@@ -16,6 +16,7 @@
 #include <qt/walletmodel.h>
 
 #include <masternode-sync.h>
+#include <masternodeman.h>
 #include <privatesend-client.h> // PRIVATESEND
 
 #include <QTimer>
@@ -148,7 +149,7 @@ OverviewPage::OverviewPage(const PlatformStyle *platformStyle, QWidget *parent) 
     if(fLiteMode) return;
 
     // Disable any PS UI for masternode or when autobackup is disabled or failed for whatever reason
-    if(fMasternodeMode || nWalletBackups <= 0){
+    if(fMasterNode || nWalletBackups <= 0){
         DisablePrivateSendCompletely();
         if (nWalletBackups <= 0) {
             ui->labelPrivateSendEnabled->setToolTip(tr("Automatic backups are disabled, no mixing available!"));
@@ -205,7 +206,7 @@ void OverviewPage::setBalance(const interfaces::WalletBalances& balances)
         ui->labelBalance->setText(BitcoinUnits::formatWithUnit(unit, balances.balance, false, BitcoinUnits::separatorAlways));
         ui->labelUnconfirmed->setText(BitcoinUnits::formatWithUnit(unit, balances.unconfirmed_balance, false, BitcoinUnits::separatorAlways));
         ui->labelImmature->setText(BitcoinUnits::formatWithUnit(unit, balances.immature_balance, false, BitcoinUnits::separatorAlways));
-        ui->labelAnonymized->setText(BitcoinUnits::floorHtmlWithUnit(nDisplayUnit, anonymizedBalance, false, BitcoinUnits::separatorAlways)); // PRIVATESEND
+        ui->labelAnonymized->setText(BitcoinUnits::formatWithUnit(unit, balances.anonymized_balance, false, BitcoinUnits::separatorAlways)); // PRIVATESEND
         ui->labelTotal->setText(BitcoinUnits::formatWithUnit(unit, balances.balance + balances.unconfirmed_balance + balances.immature_balance, false, BitcoinUnits::separatorAlways));
         ui->labelWatchAvailable->setText(BitcoinUnits::formatWithUnit(unit, balances.watch_only_balance, false, BitcoinUnits::separatorAlways));
         ui->labelWatchPending->setText(BitcoinUnits::formatWithUnit(unit, balances.unconfirmed_watch_only_balance, false, BitcoinUnits::separatorAlways));
@@ -224,12 +225,11 @@ void OverviewPage::setBalance(const interfaces::WalletBalances& balances)
     // PRIVATESEND BEGin
     updatePrivateSendProgress();
 
-    if (walletModel) {
-        int numISLocks = walletModel->getNumISLocks();
-        if(cachedNumISLocks != numISLocks) {
-            cachedNumISLocks = numISLocks;
-            ui->listTransactions->update();
-        }
+    static int cachedTxLocks = 0;
+
+    if(cachedTxLocks != nCompleteTXLocks){
+        cachedTxLocks = nCompleteTXLocks;
+        ui->listTransactions->update();
     }
     // PRIVATESEND
 }
@@ -596,7 +596,8 @@ void OverviewPage::privateSendInfo(){
     dlg.exec();
 }
 
-void OverviewPage::togglePrivateSend(){
+void OverviewPage::togglePrivateSend(const interfaces::WalletBalances& balances)
+{
     QSettings settings;
     // Popup some information on first mixing
     QString hasMixed = settings.value("hasMixed").toString();
@@ -608,8 +609,9 @@ void OverviewPage::togglePrivateSend(){
     }
     if(!privateSendClient.fEnablePrivateSend){
         const CAmount nMinAmount = CPrivateSend::GetSmallestDenomination() + CPrivateSend::GetMaxCollateralAmount();
-        if(currentBalance < nMinAmount){
-            QString strMinAmount(BitcoinUnits::formatWithUnit(nDisplayUnit, nMinAmount));
+        if(balances.balance < nMinAmount){
+            int unit = walletModel->getOptionsModel()->getDisplayUnit();
+            QString strMinAmount(BitcoinUnits::formatWithUnit(unit, nMinAmount));
             QMessageBox::warning(this, tr("PrivateSend"),
                 tr("PrivateSend requires at least %1 to use.").arg(strMinAmount),
                 QMessageBox::Ok, QMessageBox::Ok);
