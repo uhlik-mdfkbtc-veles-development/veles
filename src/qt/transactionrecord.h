@@ -81,7 +81,7 @@ public:
         SendToOther,
         RecvWithAddress,
         RecvFromOther,
-        SendToSelf
+        SendToSelf,
         // PRIVATESEND START
         RecvWithPrivateSend,
         PrivateSendDenominate,
