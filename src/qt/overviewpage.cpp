@@ -17,9 +17,12 @@
 #include <qt/walletmodel.h>
 #include <qt/utilitydialog.h>
 
+// PRIVATESEND BEGIN
+#include "instantx.h"
+#include "darksendconfig.h"
 #include <masternode-sync.h>
-#include <masternodeman.h>
-#include <privatesend-client.h> // PRIVATESEND
+#include <privatesend-client.h>
+// PRIVATESEND END
 #include <shutdown.h>
 
 #include <QTimer>
@@ -228,7 +231,7 @@ void OverviewPage::setBalance(const interfaces::WalletBalances& balances)
     ui->labelImmatureText->setVisible(showImmature || showWatchOnlyImmature);
     ui->labelWatchImmature->setVisible(!walletModel->privateKeysDisabled() && showWatchOnlyImmature); // show watch-only immature balance
     // PRIVATESEND BEGin
-    updatePrivateSendProgress();
+    updatePrivateSendProgress(balances);
 
     static int cachedTxLocks = 0;
 
@@ -349,6 +352,8 @@ void OverviewPage::updatePrivateSendProgress(const interfaces::WalletBalances& b
 {
     if(!masternodeSync.IsBlockchainSynced() || ShutdownRequested()) return;
 
+    std::vector<std::shared_ptr<CWallet>> wallets = GetWallets();
+    CWallet * const pwallet = (wallets.size() > 0) ? wallets[0].get() : nullptr;
     if(!pwallet) return;
 
     QString strAmountAndRounds;
@@ -371,9 +376,9 @@ void OverviewPage::updatePrivateSendProgress(const interfaces::WalletBalances& b
         return;
     }
 
-    CAmount nAnonymizableBalance = pwalletMain->GetAnonymizableBalance(false, false);
+    CAmount nAnonymizableBalance = pwallet->GetAnonymizableBalance(false, false);
 
-    CAmount nMaxToAnonymize = nAnonymizableBalance + currentAnonymizedBalance;
+    CAmount nMaxToAnonymize = nAnonymizableBalance + balances.anonymized_balance;
 
     // If it's more than the anon threshold, limit to that.
     if(nMaxToAnonymize > privateSendClient.nPrivateSendAmount*COIN) nMaxToAnonymize = privateSendClient.nPrivateSendAmount*COIN;
@@ -411,10 +416,10 @@ void OverviewPage::updatePrivateSendProgress(const interfaces::WalletBalances& b
     CAmount nNormalizedAnonymizedBalance;
     float nAverageAnonymizedRounds;
 
-    nDenominatedConfirmedBalance = pwalletMain->GetDenominatedBalance();
-    nDenominatedUnconfirmedBalance = pwalletMain->GetDenominatedBalance(true);
-    nNormalizedAnonymizedBalance = pwalletMain->GetNormalizedAnonymizedBalance();
-    nAverageAnonymizedRounds = pwalletMain->GetAverageAnonymizedRounds();
+    nDenominatedConfirmedBalance = pwallet->GetDenominatedBalance();
+    nDenominatedUnconfirmedBalance = pwallet->GetDenominatedBalance(true);
+    nNormalizedAnonymizedBalance = pwallet->GetNormalizedAnonymizedBalance();
+    nAverageAnonymizedRounds = pwallet->GetAverageAnonymizedRounds();
 
     // calculate parts of the progress, each of them shouldn't be higher than 1
     // progress of denominating
@@ -433,7 +438,7 @@ void OverviewPage::updatePrivateSendProgress(const interfaces::WalletBalances& b
     anonNormPart = anonNormPart > 1 ? 1 : anonNormPart;
     anonNormPart *= 100;
 
-    anonFullPart = (float)currentAnonymizedBalance / nMaxToAnonymize;
+    anonFullPart = (float)balances.anonymized_balance / nMaxToAnonymize;
     anonFullPart = anonFullPart > 1 ? 1 : anonFullPart;
     anonFullPart *= 100;
 
@@ -479,7 +484,7 @@ void OverviewPage::updateAdvancedPSUI(bool fShowAdvancedPSUI) {
     ui->labelPrivateSendLastMessage->setVisible(fShowAdvancedPSUI);
 }
 
-void OverviewPage::privateSendStatus()
+void OverviewPage::privateSendStatus(const interfaces::WalletBalances& balances)
 {
     if(!masternodeSync.IsBlockchainSynced() || ShutdownRequested()) return;
 
@@ -490,8 +495,10 @@ void OverviewPage::privateSendStatus()
     if(((nBestHeight - privateSendClient.nCachedNumBlocks) / (GetTimeMillis() - nLastDSProgressBlockTime + 1) > 1)) return;
     nLastDSProgressBlockTime = GetTimeMillis();
 
-    QString strKeysLeftText(tr("keys left: %1").arg(pwalletMain->nKeysLeftSinceAutoBackup));
-    if(pwalletMain->nKeysLeftSinceAutoBackup < PRIVATESEND_KEYS_THRESHOLD_WARNING) {
+    std::vector<std::shared_ptr<CWallet>> wallets = GetWallets();
+    CWallet * const pwallet = (wallets.size() > 0) ? wallets[0].get() : nullptr;
+    QString strKeysLeftText(tr("keys left: %1").arg(pwallet->nKeysLeftSinceAutoBackup));
+    if(pwallet->nKeysLeftSinceAutoBackup < PRIVATESEND_KEYS_THRESHOLD_WARNING) {
         strKeysLeftText = "<span style='color:red;'>" + strKeysLeftText + "</span>";
     }
     ui->labelPrivateSendEnabled->setToolTip(strKeysLeftText);
@@ -499,7 +506,7 @@ void OverviewPage::privateSendStatus()
     if (!privateSendClient.fEnablePrivateSend) {
         if (nBestHeight != privateSendClient.nCachedNumBlocks) {
             privateSendClient.nCachedNumBlocks = nBestHeight;
-            updatePrivateSendProgress();
+            updatePrivateSendProgress(balances);
         }
 
         ui->labelPrivateSendLastMessage->setText("");
@@ -515,7 +522,7 @@ void OverviewPage::privateSendStatus()
 
     // Warn user that wallet is running out of keys
     // NOTE: we do NOT warn user and do NOT create autobackups if mixing is not running
-    if (nWalletBackups > 0 && pwalletMain->nKeysLeftSinceAutoBackup < PRIVATESEND_KEYS_THRESHOLD_WARNING) {
+    if (nWalletBackups > 0 && pwallet->nKeysLeftSinceAutoBackup < PRIVATESEND_KEYS_THRESHOLD_WARNING) {
         QSettings settings;
         if(settings.value("fLowKeysWarning").toBool()) {
             QString strWarn =   tr("Very low number of keys left since last automatic backup!") + "<br><br>" +
@@ -532,7 +539,7 @@ void OverviewPage::privateSendStatus()
 
         std::string strBackupWarning;
         std::string strBackupError;
-        if(!AutoBackupWallet(pwalletMain, "", strBackupWarning, strBackupError)) {
+        if(!AutoBackupWallet(pwallet, "", strBackupWarning, strBackupError)) {
             if (!strBackupWarning.empty()) {
                 // It's still more or less safe to continue but warn user anyway
                 LogPrintf("OverviewPage::privateSendStatus -- WARNING! Something went wrong on automatic backup: %s\n", strBackupWarning);
@@ -578,7 +585,7 @@ void OverviewPage::privateSendStatus()
     if(nBestHeight != privateSendClient.nCachedNumBlocks) {
         // Balance and number of transactions might have changed
         privateSendClient.nCachedNumBlocks = nBestHeight;
-        updatePrivateSendProgress();
+        updatePrivateSendProgress(balances);
     }
 
     QString strStatus = QString(privateSendClient.GetStatus().c_str());
@@ -611,8 +618,9 @@ void OverviewPage::privateSendReset(){
 }
 
 void OverviewPage::privateSendInfo(){
-    HelpMessageDialog dlg(this, HelpMessageDialog::showOrPrint());
-    dlg.exec();
+    // PRIVATESEND TODO:
+    //HelpMessageDialog dlg(this, HelpMessageDialog::showOrPrint());
+    //dlg.exec();
 }
 
 void OverviewPage::togglePrivateSend(const interfaces::WalletBalances& balances)

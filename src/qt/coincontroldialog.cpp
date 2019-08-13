@@ -410,7 +410,7 @@ void CoinControlDialog::viewItemChanged(QTreeWidgetItem* item, int column)
             coinControl()->UnSelect(outpt);
         else if (item->isDisabled()) // locked (this happens if "check all" through parent node)
             item->setCheckState(COLUMN_CHECKBOX, Qt::Unchecked);
-        else
+        else {
             coinControl()->Select(outpt);
             // PRIVATESEND START
             std::vector<std::shared_ptr<CWallet>> wallets = GetWallets();
@@ -421,7 +421,9 @@ void CoinControlDialog::viewItemChanged(QTreeWidgetItem* item, int column)
                     tr("Non-anonymized input selected. <b>PrivateSend will be disabled.</b><br><br>If you still want to use PrivateSend, please deselect all non-anonymized inputs first and then check the PrivateSend checkbox again."),
                     QMessageBox::Ok, QMessageBox::Ok);
                 coinControl()->fUsePrivateSend = false;
+            }
             //PRIVATESEND END
+        }
 
         // selection changed -> update labels
         if (ui->treeWidget->isEnabled()) // do not update on every click for (un)select all
@@ -435,7 +437,6 @@ void CoinControlDialog::viewItemChanged(QTreeWidgetItem* item, int column)
         if (item->checkState(COLUMN_CHECKBOX) == Qt::PartiallyChecked && item->child(0)->checkState(COLUMN_CHECKBOX) == Qt::PartiallyChecked)
             item->setCheckState(COLUMN_CHECKBOX, Qt::Checked);
     }
-  }
 }
 
 // shows count of locked unspent outputs
