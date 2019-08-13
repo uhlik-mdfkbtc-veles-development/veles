@@ -38,8 +38,10 @@ public:
     void showOutOfSyncWarning(bool fShow);
 
 public Q_SLOTS:
-    void privateSendStatus(); // PRIVATESEND
+    // PRIVATESEND BEGIN
+    void privateSendStatus(const interfaces::WalletBalances& balances);
     void setBalance(const interfaces::WalletBalances& balances);
+    // PRIVATESEND END
 
 Q_SIGNALS:
     void transactionClicked(const QModelIndex &index);
@@ -67,6 +69,7 @@ private Q_SLOTS:
     void privateSendAuto();
     void privateSendReset();
     void privateSendInfo();
+    //void updatePrivateSendProgress();
     void updatePrivateSendProgress(const interfaces::WalletBalances& balances);
     void updateAdvancedPSUI(bool fShowAdvancedPSUI);
     // PRIVATESEND END
