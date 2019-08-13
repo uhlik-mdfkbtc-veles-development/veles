@@ -17,7 +17,6 @@ class BanTableModel;
 class OptionsModel;
 class PeerTableModel;
 
-
 class CBlockIndex;
 
 namespace interfaces {
