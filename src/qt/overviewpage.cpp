@@ -15,17 +15,21 @@
 #include <qt/transactionfilterproxy.h>
 #include <qt/transactiontablemodel.h>
 #include <qt/walletmodel.h>
+#include <qt/utilitydialog.h>
 
 #include <masternode-sync.h>
 #include <masternodeman.h>
 #include <privatesend-client.h> // PRIVATESEND
+#include <shutdown.h>
 
 #include <QTimer>
 #include <QAbstractItemDelegate>
 #include <QPainter>
+#include <QSettings>
 
 #define DECORATION_SIZE 54
 #define NUM_ITEMS 5
+#define NUM_ITEMS_ADV 7
 
 Q_DECLARE_METATYPE(interfaces::WalletBalances)
 
@@ -341,22 +345,25 @@ void OverviewPage::showOutOfSyncWarning(bool fShow)
     ui->labelTransactionsStatus->setVisible(fShow);
 }
 // PRIVATESEND START
-void OverviewPage::updatePrivateSendProgress()
+void OverviewPage::updatePrivateSendProgress(const interfaces::WalletBalances& balances)
 {
     if(!masternodeSync.IsBlockchainSynced() || ShutdownRequested()) return;
 
-    if(!pwalletMain) return;
+    if(!pwallet) return;
 
     QString strAmountAndRounds;
-    QString strPrivateSendAmount = BitcoinUnits::formatHtmlWithUnit(nDisplayUnit, privateSendClient.nPrivateSendAmount * COIN, false, BitcoinUnits::separatorAlways);
+    int unit = walletModel->getOptionsModel()->getDisplayUnit();
+    QString strPrivateSendAmount = BitcoinUnits::formatHtmlWithUnit(unit, privateSendClient.nPrivateSendAmount * COIN, false, BitcoinUnits::separatorAlways);
 
-    if(currentBalance == 0)
+    if(balances.balance  == 0)
     {
+        int unit = walletModel->getOptionsModel()->getDisplayUnit();
+
         ui->privateSendProgress->setValue(0);
         ui->privateSendProgress->setToolTip(tr("No inputs detected"));
 
         // when balance is zero just show info from settings
-        strPrivateSendAmount = strPrivateSendAmount.remove(strPrivateSendAmount.indexOf("."), BitcoinUnits::decimals(nDisplayUnit) + 1);
+        strPrivateSendAmount = strPrivateSendAmount.remove(strPrivateSendAmount.indexOf("."), BitcoinUnits::decimals(unit) + 1);
         strAmountAndRounds = strPrivateSendAmount + " / " + tr("%n Rounds", "", privateSendClient.nPrivateSendRounds);
 
         ui->labelAmountRounds->setToolTip(tr("No inputs detected"));
@@ -374,19 +381,25 @@ void OverviewPage::updatePrivateSendProgress()
     if(nMaxToAnonymize == 0) return;
 
     if(nMaxToAnonymize >= privateSendClient.nPrivateSendAmount * COIN) {
+        
+        int unit = walletModel->getOptionsModel()->getDisplayUnit();
+
         ui->labelAmountRounds->setToolTip(tr("Found enough compatible inputs to anonymize %1")
                                           .arg(strPrivateSendAmount));
-        strPrivateSendAmount = strPrivateSendAmount.remove(strPrivateSendAmount.indexOf("."), BitcoinUnits::decimals(nDisplayUnit) + 1);
+        strPrivateSendAmount = strPrivateSendAmount.remove(strPrivateSendAmount.indexOf("."), BitcoinUnits::decimals(unit) + 1);
         strAmountAndRounds = strPrivateSendAmount + " / " + tr("%n Rounds", "", privateSendClient.nPrivateSendRounds);
     } else {
-        QString strMaxToAnonymize = BitcoinUnits::formatHtmlWithUnit(nDisplayUnit, nMaxToAnonymize, false, BitcoinUnits::separatorAlways);
+
+        int unit = walletModel->getOptionsModel()->getDisplayUnit();
+
+        QString strMaxToAnonymize = BitcoinUnits::formatHtmlWithUnit(unit, nMaxToAnonymize, false, BitcoinUnits::separatorAlways);
         ui->labelAmountRounds->setToolTip(tr("Not enough compatible inputs to anonymize <span style='color:red;'>%1</span>,<br>"
                                              "will anonymize <span style='color:red;'>%2</span> instead")
                                           .arg(strPrivateSendAmount)
                                           .arg(strMaxToAnonymize));
-        strMaxToAnonymize = strMaxToAnonymize.remove(strMaxToAnonymize.indexOf("."), BitcoinUnits::decimals(nDisplayUnit) + 1);
+        strMaxToAnonymize = strMaxToAnonymize.remove(strMaxToAnonymize.indexOf("."), BitcoinUnits::decimals(unit) + 1);
         strAmountAndRounds = "<span style='color:red;'>" +
-                QString(BitcoinUnits::factor(nDisplayUnit) == 1 ? "" : "~") + strMaxToAnonymize +
+                QString(BitcoinUnits::factor(unit) == 1 ? "" : "~") + strMaxToAnonymize +
                 " / " + tr("%n Rounds", "", privateSendClient.nPrivateSendRounds) + "</span>";
     }
     ui->labelAmountRounds->setText(strAmountAndRounds);
@@ -568,16 +581,21 @@ void OverviewPage::privateSendStatus()
         updatePrivateSendProgress();
     }
 
-    QString strStatus = QString(privateSendClient.GetStatuses().c_str());
+    QString strStatus = QString(privateSendClient.GetStatus().c_str());
 
     QString s = tr("Last PrivateSend message:\n") + strStatus;
 
     if(s != ui->labelPrivateSendLastMessage->text())
-        LogPrint("privatesend", "OverviewPage::privateSendStatus -- Last PrivateSend message: %s\n", strStatus.toStdString());
+        LogPrintf("OverviewPage::privateSendStatus -- Last PrivateSend message: %s\n", strStatus.toStdString());
 
     ui->labelPrivateSendLastMessage->setText(s);
 
-    ui->labelSubmittedDenom->setText(QString(privateSendClient.GetSessionDenoms().c_str()));
+    if(privateSendClient.nSessionDenom == 0){
+        ui->labelSubmittedDenom->setText(tr("N/A"));
+    } else {
+        QString strDenom(CPrivateSend::GetDenominationsToString(privateSendClient.nSessionDenom).c_str());
+        ui->labelSubmittedDenom->setText(strDenom);
+    }
 }
 
 void OverviewPage::privateSendAuto(){
@@ -630,7 +648,7 @@ void OverviewPage::togglePrivateSend(const interfaces::WalletBalances& balances)
                 QMessageBox::warning(this, tr("PrivateSend"),
                     tr("Wallet is locked and user declined to unlock. Disabling PrivateSend."),
                     QMessageBox::Ok, QMessageBox::Ok);
-                LogPrint("privatesend", "OverviewPage::togglePrivateSend -- Wallet is locked and user declined to unlock. Disabling PrivateSend.\n");
+                LogPrintf("privatesend", "OverviewPage::togglePrivateSend -- Wallet is locked and user declined to unlock. Disabling PrivateSend.\n");
                 return;
             }
         }

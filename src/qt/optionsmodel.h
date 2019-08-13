@@ -57,6 +57,7 @@ public:
         PrivateSendRounds,      // int
         PrivateSendAmount,      // int
         PrivateSendMultiSession,// bool
+        ShowAdvancedPSUI,       // bool
         // PRIVATESEND END
         Language,               // QString
         CoinControlFeatures,    // bool
@@ -89,6 +90,8 @@ public:
     QString getThirdPartyTxUrls() const { return strThirdPartyTxUrls; }
     bool getProxySettings(QNetworkProxy& proxy) const;
     bool getCoinControlFeatures() const { return fCoinControlFeatures; }
+    bool getShowAdvancedPSUI() { return fShowAdvancedPSUI; }
+
     const QString& getOverriddenByCommandLine() { return strOverriddenByCommandLine; }
 
     /* Restart flag helper */
@@ -109,6 +112,7 @@ private:
     bool fCoinControlFeatures;
     /* settings that were overridden by command-line */
     QString strOverriddenByCommandLine;
+    bool fShowAdvancedPSUI; //PRIVATE SEND
 
     // Add option to list of GUI options overridden through command line/config file
     void addOverriddenOption(const std::string &option);
@@ -120,6 +124,7 @@ Q_SIGNALS:
     void coinControlFeaturesChanged(bool);
     void hideTrayIconChanged(bool);
     // PRIVATESEND START
+    void advancedPSUIChanged(bool);
     void privateSendRoundsChanged();
     void privateSentAmountChanged();
     // PRIVATESEND END

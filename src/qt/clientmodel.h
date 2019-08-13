@@ -17,6 +17,7 @@ class BanTableModel;
 class OptionsModel;
 class PeerTableModel;
 
+
 class CBlockIndex;
 
 namespace interfaces {
@@ -59,6 +60,7 @@ public:
     //! Return number of connections, default is in- and outbound (total)
     int getNumConnections(unsigned int flags = CONNECTIONS_ALL) const;
     // Dash
+    int getNumBlocks() const;
     QString getMasternodeCountString() const;
     //
     int getHeaderTipHeight() const;

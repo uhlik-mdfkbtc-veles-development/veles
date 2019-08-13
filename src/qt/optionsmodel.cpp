@@ -96,6 +96,10 @@ void OptionsModel::Init(bool resetSettings)
     fCoinControlFeatures = settings.value("fCoinControlFeatures", false).toBool();
 
     // PRIVATESEND START
+    if (!settings.contains("fShowAdvancedPSUI")) 
+        settings.setValue("fShowAdvancedPSUI", false);
+    fShowAdvancedPSUI = settings.value("fShowAdvancedPSUI", false).toBool();
+
     if (!settings.contains("fShowPrivateSendPopups"))
         settings.setValue("fShowPrivateSendPopups", true);
     // PRIVATESEND END
@@ -338,6 +342,8 @@ QVariant OptionsModel::data(const QModelIndex & index, int role) const
             return settings.value("fShowMasternodesTab");
         //
         // PRIVATESEND START
+        case ShowAdvancedPSUI:
+            return fShowAdvancedPSUI;    
         case ShowPrivateSendPopups:
             return settings.value("fShowPrivateSendPopups");
         //case LowKeysWarning:
@@ -477,6 +483,11 @@ bool OptionsModel::setData(const QModelIndex & index, const QVariant & value, in
             break;
         //
         // PRIVATESEND START
+        case ShowAdvancedPSUI:
+            fShowAdvancedPSUI = value.toBool();
+            settings.setValue("fShowAdvancedPSUI", fShowAdvancedPSUI);
+            Q_EMIT advancedPSUIChanged(fShowAdvancedPSUI);
+            break;
         case ShowPrivateSendPopups:
             settings.setValue("fShowPrivateSendPopups", value);
             break;

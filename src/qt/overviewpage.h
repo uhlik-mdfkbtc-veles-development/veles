@@ -53,18 +53,22 @@ private:
     ClientModel *clientModel;
     WalletModel *walletModel;
     interfaces::WalletBalances m_balances;
+    bool fShowAdvancedPSUI; //PRIVATESEND
 
     TxViewDelegate *txdelegate;
     std::unique_ptr<TransactionFilterProxy> filter;
     void DisablePrivateSendCompletely(); // PRIVATESEND
+    void SetupTransactionList(int nNumItems); // PRIVATESEND
+
 
 private Q_SLOTS:
     // PRIVATESEND START
-    void togglePrivateSend();
+    void togglePrivateSend(const interfaces::WalletBalances& balances);
     void privateSendAuto();
     void privateSendReset();
     void privateSendInfo();
-    void updatePrivateSendProgress();
+    void updatePrivateSendProgress(const interfaces::WalletBalances& balances);
+    void updateAdvancedPSUI(bool fShowAdvancedPSUI);
     // PRIVATESEND END
     void updateDisplayUnit();
     void handleTransactionClicked(const QModelIndex &index);
