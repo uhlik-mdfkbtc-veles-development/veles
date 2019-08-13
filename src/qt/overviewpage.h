@@ -46,6 +46,9 @@ Q_SIGNALS:
     void outOfSyncWarningClicked();
 
 private:
+    // PRIVATESEND BEGIN
+    QTimer *timer;
+    // PRIVATESEND END
     Ui::OverviewPage *ui;
     ClientModel *clientModel;
     WalletModel *walletModel;

@@ -144,10 +144,6 @@ static const CRPCConvertParam vRPCConvertParams[] =
     // Dash
     { "spork", 1, "value" },
     //
-    // PRIVATESEND START
-    { "setprivatesendrounds", 0, "rounds" },
-    { "setprivatesendamount", 0, "amount" },
-    // PRIVATESEND END
     { "getmempoolancestors", 1, "verbose" },
     { "getmempooldescendants", 1, "verbose" },
     { "bumpfee", 1, "options" },
