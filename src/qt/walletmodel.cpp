@@ -44,6 +44,7 @@ WalletModel::WalletModel(std::unique_ptr<interfaces::Wallet> wallet, interfaces:
     cachedEncryptionStatus(Unencrypted),
     cachedNumBlocks(0),
     // PRIVATESEND START
+    cachedTxLocks(0),
     cachedPrivateSendRounds(0)
     // PRIVATESEND END
 {
@@ -102,6 +103,7 @@ void WalletModel::pollBalanceChanged()
 
 void WalletModel::checkBalanceChanged(const interfaces::WalletBalances& new_balances)
 {
+    // PRIVATESEND TODO:
     if(new_balances.balanceChanged(m_cached_balances)) {
         m_cached_balances = new_balances;
         Q_EMIT balanceChanged(new_balances);
