@@ -18,8 +18,8 @@
 #include <qt/utilitydialog.h>
 
 // PRIVATESEND BEGIN
-#include "instantx.h"
-#include "darksendconfig.h"
+#include <instantx.h>
+#include <qt/darksendconfig.h>
 #include <masternode-sync.h>
 #include <privatesend-client.h>
 // PRIVATESEND END

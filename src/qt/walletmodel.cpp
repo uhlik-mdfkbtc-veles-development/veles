@@ -26,6 +26,7 @@
 #include <wallet/coincontrol.h>
 #include <wallet/wallet.h>
 // PRIVATESEND START
+#include <instantx.h>
 #include <privatesend-client.h>
 // PRIVATESEND END
 
