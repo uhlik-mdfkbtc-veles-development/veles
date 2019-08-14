@@ -963,7 +963,7 @@ static const CRPCCommand commands[] =
     { "dash",               "getpoolinfo",            &getpoolinfo,            {}  },
     { "dash",               "sentinelping",           &sentinelping,           {"version"}  },
 #ifdef ENABLE_WALLET
-// FXTC TODO:    { "dash",               "privatesend",            &privatesend,            {"command"}  },
+    { "dash",               "privatesend",            &privatesend,            {"command"}  },
 #endif
 };
 
