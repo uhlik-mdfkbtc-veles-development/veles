@@ -51,7 +51,12 @@ RPC's
 New RPC's: 
 ----------
  
- - `privatesend` - using for stop , start or restart PrivateSend mixing 
+ - `privatesend` - use for stop , start or restart PrivateSend mixing 
+
+Update RPC's: 
+-------------
+ 
+ - `getwalletinfo` - add 'privatesend_balance' into output of command 
 
 PrivateSend
 ===========
@@ -124,3 +129,5 @@ Veles Core contributors
 - Uhliksk
 - AltcoinBaggins
 - Mdfkbtc
+
+Special thanks to whole Dash Core team .
