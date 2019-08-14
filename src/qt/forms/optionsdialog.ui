@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>560</width>
-    <height>440</height>
+    <width>581</width>
+    <height>463</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabMain">
       <attribute name="title">
@@ -51,20 +51,20 @@
         </spacer>
        </item>
        <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_Main_Prune">
-        <item>
-         <widget class="QCheckBox" name="prune">
-          <property name="toolTip">
-           <string>Disables some advanced features but all blocks will still be fully validated. Reverting this setting requires re-downloading the entire blockchain. Actual disk usage may be somewhat higher.</string>
-          </property>
-          <property name="text">
-           <string>Prune &amp;block storage to</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="pruneSize"/>
-        </item>
+        <layout class="QHBoxLayout" name="horizontalLayout_Main_Prune">
+         <item>
+          <widget class="QCheckBox" name="prune">
+           <property name="toolTip">
+            <string>Disables some advanced features but all blocks will still be fully validated. Reverting this setting requires re-downloading the entire blockchain. Actual disk usage may be somewhat higher.</string>
+           </property>
+           <property name="text">
+            <string>Prune &amp;block storage to</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="pruneSize"/>
+         </item>
          <item>
           <widget class="QLabel" name="pruneSizeUnitLabel">
            <property name="text">
@@ -216,7 +216,6 @@
             </property>
            </widget>
           </item>
-          <!-- Dash -->
           <item>
            <widget class="QCheckBox" name="showMasternodesTab">
             <property name="toolTip">
@@ -224,27 +223,6 @@
             </property>
             <property name="text">
              <string>Show Masternodes Tab</string>
-            </property>
-           </widget>
-          </item>
-          <!--      -->
-          <item>
-           <widget class="QCheckBox" name="showAdvancedPSUI">
-            <property name="toolTip">
-             <string>Show additional information and buttons for PrivateSend on overview screen.</string>
-            </property>
-            <property name="text">
-             <string>Enable advanced PrivateSend interface</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="showPrivateSendPopups">
-            <property name="toolTip">
-             <string>Show system popups for PrivateSend mixing transactions&lt;br/&gt;just like for all other transaction types.</string>
-            </property>
-            <property name="text">
-             <string>Show popups for PrivateSend transactions</string>
             </property>
            </widget>
           </item>
@@ -265,6 +243,16 @@
             </property>
             <property name="text">
              <string>Enable PrivateSend &amp;multi-session</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="showAdvancedPSUI">
+            <property name="toolTip">
+             <string>Show additional information and buttons for PrivateSend on overview screen.</string>
+            </property>
+            <property name="text">
+             <string>Enable advanced PrivateSend interface</string>
             </property>
            </widget>
           </item>
@@ -299,7 +287,7 @@
             <number>2</number>
            </property>
            <property name="maximum">
-            <number>16</number>
+            <number>8</number>
            </property>
            <property name="value">
             <number>4</number>
@@ -309,9 +297,9 @@
         </layout>
        </item>
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
          <item>
-          <widget class="QLabel" name="label_2">
+          <widget class="QLabel" name="label_4">
            <property name="toolTip">
             <string>This amount acts as a threshold to turn off PrivateSend once it's reached.</string>
            </property>
@@ -328,12 +316,12 @@
             <string notr="true"/>
            </property>
            <property name="text">
-            <string>Amount of VLS to keep anonymized</string>
+            <string>Amount of Dash to keep anonymized</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QSpinBox" name="privateSendAmount">
+          <widget class="QSpinBox" name="privateSendAmount_2">
            <property name="minimum">
             <number>2</number>
            </property>
@@ -762,7 +750,6 @@
          </item>
         </layout>
        </item>
-       <!-- VELES BEGIN -->
        <item>
         <widget class="QLabel" name="label_3">
          <property name="toolTip">
@@ -779,7 +766,7 @@
          </property>
          <property name="text">
           <string>Language missing or translation incomplete? Help contributing translations here:
-      https://veles.network</string>
+      https://www.transifex.com/projects/p/dash/</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -813,7 +800,6 @@
          </property>
         </widget>
        </item>
-       <!-- VELES END -->
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2_Display">
          <item>
@@ -1065,7 +1051,7 @@
   <customwidget>
    <class>QValueComboBox</class>
    <extends>QComboBox</extends>
-   <header>qt/qvaluecombobox.h</header>
+   <header>qvaluecombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
