@@ -694,47 +694,6 @@ void MaybeCompactWalletDB()
 
 // Dash
 // FXTC TODO: convert to multi-wallet backup
-/*
-bool BackupWallet(const CWallet& wallet, const std::string& strDest)
-{
-    if (!wallet.fFileBacked)
-        return false;
-    while (true)
-    {
-        {
-            LOCK(bitdb.cs_db);
-            if (!bitdb.mapFileUseCount.count(DEFAULT_WALLET_DAT) || bitdb.mapFileUseCount[DEFAULT_WALLET_DAT] == 0)
-            {
-                // Flush log data to the dat file
-                bitdb.CloseDb(DEFAULT_WALLET_DAT);
-                bitdb.CheckpointLSN(DEFAULT_WALLET_DAT);
-                bitdb.mapFileUseCount.erase(DEFAULT_WALLET_DAT);
-
-                // Copy wallet.dat
-                fs::path pathSrc = GetDataDir() / DEFAULT_WALLET_DAT;
-                fs::path pathDest(strDest);
-                if (fs::is_directory(pathDest))
-                    pathDest /= DEFAULT_WALLET_DAT;
-
-                try {
-#if BOOST_VERSION >= 104000
-                    fs::copy_file(pathSrc, pathDest, fs::copy_option::overwrite_if_exists);
-#else
-                    fs::copy_file(pathSrc, pathDest);
-#endif
-                    LogPrintf("copied wallet.dat to %s\n", pathDest.string());
-                    return true;
-                } catch (const fs::filesystem_error& e) {
-                    LogPrintf("error copying wallet.dat to %s - %s\n", pathDest.string(), e.what());
-                    return false;
-                }
-            }
-        }
-        MilliSleep(100);
-    }
-    return false;
-}
-
 // This should be called carefully:
 // either supply "wallet" (if already loaded) or "strWalletFile" (if wallet wasn't loaded yet)
 bool AutoBackupWallet (CWallet* wallet, std::string strWalletFile, std::string& strBackupWarning, std::string& strBackupError)
@@ -761,17 +720,17 @@ bool AutoBackupWallet (CWallet* wallet, std::string strWalletFile, std::string& 
         }
 
         // Create backup of the ...
-        std::string dateTimeStr = DateTimeStrFormat(".%Y-%m-%d-%H-%M", GetTime());
+        std::string dateTimeStr = FormatISO8601DateTime(GetTime());
         if (wallet)
         {
             // ... opened wallet
             LOCK2(cs_main, wallet->cs_wallet);
             // FXTC TODO: add -wallet parameter
             // strWalletFile = wallet->strWalletFile;
-            strWalletFile = DEFAULT_WALLET_DAT;
+            strWalletFile = "wallet.dat";
             //
             fs::path backupFile = backupsDir / (strWalletFile + dateTimeStr);
-            if(!BackupWallet(*wallet, backupFile.string())) {
+            if(!wallet->BackupWallet(backupFile.string())) {
                 strBackupWarning = strprintf(_("Failed to create backup %s!"), backupFile.string());
                 LogPrintf("%s\n", strBackupWarning);
                 nWalletBackups = -1;
@@ -855,7 +814,7 @@ bool AutoBackupWallet (CWallet* wallet, std::string strWalletFile, std::string& 
 
     LogPrintf("Automatic wallet backups are disabled!\n");
     return false;
-}*/
+}
 //
 
 //

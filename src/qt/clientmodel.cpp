@@ -102,6 +102,14 @@ QString ClientModel::getMasternodeCountString() const
 }
 //
 
+// PRIVATESEND BEGIN
+int ClientModel::getNumBlocks() const
+{
+    LOCK(cs_main);
+    return chainActive.Height();
+}
+// PRIVATESEND END
+
 int ClientModel::getHeaderTipHeight() const
 {
     if (cachedBestHeaderHeight == -1) {
