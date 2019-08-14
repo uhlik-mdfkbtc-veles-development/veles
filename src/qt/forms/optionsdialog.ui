@@ -316,7 +316,7 @@
             <string notr="true"/>
            </property>
            <property name="text">
-            <string>Amount of Dash to keep anonymized</string>
+            <string>Amount of VLS to keep anonymized</string>
            </property>
           </widget>
          </item>
@@ -766,7 +766,7 @@
          </property>
          <property name="text">
           <string>Language missing or translation incomplete? Help contributing translations here:
-      https://www.transifex.com/projects/p/dash/</string>
+      https://veles.network/</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
@@ -1042,7 +1042,7 @@
    </item>
   </layout>
  </widget>
- <customwidgets>
+  <customwidgets>
   <customwidget>
    <class>QValidatedLineEdit</class>
    <extends>QLineEdit</extends>
@@ -1051,7 +1051,7 @@
   <customwidget>
    <class>QValueComboBox</class>
    <extends>QComboBox</extends>
-   <header>qvaluecombobox.h</header>
+   <header>qt/qvaluecombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
