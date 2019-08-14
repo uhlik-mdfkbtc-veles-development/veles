@@ -79,18 +79,25 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const interface
     }
     else
     {
+        // PRIVATESEND START
+        std::vector<std::shared_ptr<CWallet>> wallets = GetWallets();
+        CWallet * const pwallet = (wallets.size() > 0) ? wallets[0].get() : nullptr;
+        // PRIVATESEND END
         bool fAllFromMeDenom = true; // PRIVATESEND
         int nFromMe = 0; // PRIVATESEND
         bool involvesWatchAddress = false;
         isminetype fAllFromMe = ISMINE_SPENDABLE;
-        for (const isminetype mine : wtx.txin_is_mine)
-        {   //PRIVATESEND START
-            if(wallet->IsMine(txin)) {
-                fAllFromMeDenom = fAllFromMeDenom && wallet->IsDenominated(txin.prevout);
+        //PRIVATESEND START
+        for (const CTxIn& txin : wtx.tx->vin)
+        {
+            if(pwallet->IsMine(txin)) {
+                fAllFromMeDenom = fAllFromMeDenom && pwallet->IsDenominated(txin.prevout);
                 nFromMe++;
             }
-            isminetype mine = wallet->IsMine(txin);
-            //PRIVATESEND END
+        }
+        //PRIVATESEND END
+        for (const isminetype mine : wtx.txin_is_mine)
+        {
             if(mine & ISMINE_WATCH_ONLY) involvesWatchAddress = true;
             if(fAllFromMe > mine) fAllFromMe = mine;
         }
@@ -98,20 +105,23 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const interface
         bool fAllToMeDenom = true; // PRIVATESEND
         int nToMe = 0; // PRIVATESEND
         isminetype fAllToMe = ISMINE_SPENDABLE;
-        for (const isminetype mine : wtx.txout_is_mine)
-        {   //PRIVATESEND START
-            if(wallet->IsMine(txout)) { 
+        //PRIVATESEND START
+        for (const CTxOut& txout : wtx.tx->vout)
+        {
+            if(pwallet->IsMine(txout)) { 
                 fAllToMeDenom = fAllToMeDenom && CPrivateSend::IsDenominatedAmount(txout.nValue);
                 nToMe++;
             }
-            isminetype mine = wallet->IsMine(txout);
-            //PRIVATESEND END
+        }
+        //PRIVATESEND END
+        for (const isminetype mine : wtx.txout_is_mine)
+        {
             if(mine & ISMINE_WATCH_ONLY) involvesWatchAddress = true;
             if(fAllToMe > mine) fAllToMe = mine;
         }
 
         //PRIVATESEND START
-        if(fAllFromMeDenom && fAllToMeDenom && nFromMe * nToMe) {
+        if(fAllFromMeDenom && fAllToMeDenom && nFromMe && nToMe) {
             parts.append(TransactionRecord(hash, nTime, TransactionRecord::PrivateSendDenominate, "", -nDebit, nCredit));
             parts.last().involvesWatchAddress = false;   // maybe pass to TransactionRecord as constructor argument
         }
@@ -131,10 +141,10 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const interface
             {
                 sub.type = TransactionRecord::PrivateSend;
                 CTxDestination address;
-                if (ExtractDestination(wtx.vout[0].scriptPubKey, address))
+                if (ExtractDestination(wtx.tx->vout[0].scriptPubKey, address))
                 {
                     // Sent to Dash Address
-                    sub.address = CBitcoinAddress(address).ToString();
+                    sub.address = EncodeDestination(address);
                 }
                 else
                 {
@@ -144,24 +154,22 @@ QList<TransactionRecord> TransactionRecord::decomposeTransaction(const interface
             }
             else
             {
-                for (unsigned int nOut = 0; nOut < wtx.vout.size(); nOut++)
+                for (unsigned int nOut = 0; nOut < wtx.tx->vout.size(); nOut++)
                 {
-                    const CTxOut& txout = wtx.vout[nOut];
+                    const CTxOut& txout = wtx.tx->vout[nOut];
                     sub.idx = parts.size();
 
                     if(CPrivateSend::IsCollateralAmount(txout.nValue)) sub.type = TransactionRecord::PrivateSendMakeCollaterals;
                     if(CPrivateSend::IsDenominatedAmount(txout.nValue)) sub.type = TransactionRecord::PrivateSendCreateDenominations;
-                    if(nDebit - wtx.GetValueOut() == CPrivateSend::GetCollateralAmount()) sub.type = TransactionRecord::PrivateSendCollateralPayment;
+                    if(nDebit - wtx.tx->GetValueOut() == CPrivateSend::GetCollateralAmount()) sub.type = TransactionRecord::PrivateSendCollateralPayment;
                 }
             }
             // PRIVATESEND END
             // Payment to self
             CAmount nChange = wtx.change;
             sub.debit = -(nDebit - nChange);
-            sub.credit = nCredit - nChange
-
-            parts.append(TransactionRecord(hash, nTime, TransactionRecord::SendToSelf, "",
-                            -(nDebit - nChange), nCredit - nChange));
+            sub.credit = nCredit - nChange;
+            parts.append(sub);
             parts.last().involvesWatchAddress = involvesWatchAddress;   // maybe pass to TransactionRecord as constructor argument
         }
         else if (fAllFromMe)

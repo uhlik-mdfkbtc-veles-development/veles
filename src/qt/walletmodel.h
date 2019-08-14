@@ -275,6 +275,7 @@ private:
     EncryptionStatus cachedEncryptionStatus;
     int cachedNumBlocks;
     // PRIVATESEND START
+    int cachedTxLocks;
     int cachedPrivateSendRounds;
     // PRIVATESEND END
     QTimer *pollTimer;
