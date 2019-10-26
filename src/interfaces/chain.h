@@ -166,6 +166,10 @@ public:
 
     //! Shut down client.
     virtual void stop() = 0;
+
+    // VELES BEGIN
+    virtual std::vector<std::string> wallet_filenames() = 0;
+    // VELES END
 };
 
 //! Return implementation of Chain interface.

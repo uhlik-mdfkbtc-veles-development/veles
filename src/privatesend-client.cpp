@@ -626,7 +626,8 @@ bool CPrivateSendClient::WaitForAnotherBlock()
 bool CPrivateSendClient::CheckAutomaticBackup()
 {
     std::vector<std::shared_ptr<CWallet>> wallets = GetWallets();
-    CWallet * const pwallet = (wallets.size() > 0) ? wallets[0].get() : nullptr;
+    //CWallet * const pwallet = (wallets.size() > 0) ? wallets[0].get() : nullptr;
+    const std::shared_ptr<CWallet>& pwallet = wallets[0];
 
     switch(nWalletBackups) {
         case 0:
@@ -668,9 +669,7 @@ bool CPrivateSendClient::CheckAutomaticBackup()
             std::string warningString;
             std::string errorString;
 
-            // FXTC TODO: enable after autobackupwallet implemented
-            //if(!AutoBackupWallet(pwallet, "", warningString, errorString)) {
-            if (false) {
+            if(!AutoBackupWallet(pwallet, "", warningString, errorString)) {
                 if(!warningString.empty()) {
                     // There were some issues saving backup but yet more or less safe to continue
                     LogPrintf("CPrivateSendClient::CheckAutomaticBackup -- WARNING! Something went wrong on automatic backup: %s\n", warningString);

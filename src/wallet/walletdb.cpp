@@ -737,7 +737,7 @@ bool BackupWallet(const CWallet& wallet, const std::string& strDest)
 
 // This should be called carefully:
 // either supply "wallet" (if already loaded) or "strWalletFile" (if wallet wasn't loaded yet)
-bool AutoBackupWallet (CWallet* wallet, std::string strWalletFile, std::string& strBackupWarning, std::string& strBackupError)
+bool AutoBackupWallet (const std::shared_ptr<CWallet> wallet, std::string strWalletFile, std::string& strBackupWarning, std::string& strBackupError)
 {
     namespace fs = boost::filesystem;
 

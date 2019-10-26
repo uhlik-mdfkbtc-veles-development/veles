@@ -1439,6 +1439,31 @@ bool AppInitMain(InitInterfaces& interfaces)
         }
     }
 
+    // ********************************************************* Step 5: Backup wallet and verify wallet database integrity
+#ifdef ENABLE_WALLET
+        nWalletBackups = gArgs.GetArg("-createwalletbackups", 10);
+        std::string strWarning;
+        std::string strError;
+
+        nWalletBackups = std::max(0, std::min(10, nWalletBackups));
+
+      /*for (const auto& client : interfaces.chain_clients) {
+       for (const std::string& walletFile : client->wallet_filenames()) {
+        if(!AutoBackupWallet(NULL, walletFile, strWarning, strError)) {
+            if (!strWarning.empty())
+                InitWarning(strWarning);
+            if (!strError.empty())
+                return InitError(strError);
+        }
+
+        LogPrintf("Using wallet %s\n", walletFile);
+        uiInterface.InitMessage(_("Verifying wallet..."));
+       }
+      }*/
+
+        // Initialize KeePass Integration
+        keePassInt.init();
+#endif // ENABLE_WALLET
     // ********************************************************* Step 6: network initialization
     // Note that we absolutely cannot open any actual connections
     // until the very end ("start node") as the UTXO/block state

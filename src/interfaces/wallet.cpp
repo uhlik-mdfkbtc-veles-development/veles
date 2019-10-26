@@ -542,6 +542,10 @@ public:
     void stop() override { return StopWallets(); }
     ~WalletClientImpl() override { UnloadWallets(); }
 
+    // VELES BEGIN
+    std::vector<std::string> wallet_filenames() override { return m_wallet_filenames; }
+    // VELES END
+
     Chain& m_chain;
     std::vector<std::string> m_wallet_filenames;
 };
