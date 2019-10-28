@@ -19,6 +19,7 @@
 #include <qt/optionsmodel.h>
 #include <qt/platformstyle.h>
 #include <qt/sendcoinsentry.h>
+#include <qt/walletmodel.h>
 
 #include <chainparams.h>
 #include <interfaces/node.h>
@@ -33,6 +34,7 @@
 #include <privatesend.h>
 // PRIVATESEND END
 
+#include <QMessageBox>
 #include <QFontMetrics>
 #include <QScrollBar>
 #include <QSettings>
@@ -110,11 +112,11 @@ SendCoinsDialog::SendCoinsDialog(const PlatformStyle *_platformStyle, QWidget *p
     if(fLiteMode) {
         ui->checkUsePrivateSend->setChecked(false);
         ui->checkUsePrivateSend->setVisible(false);
-        CoinControlDialog::coinControl->fUsePrivateSend = false;
+        CoinControlDialog::coinControl()->fUsePrivateSend = false;
     }
     else{
         ui->checkUsePrivateSend->setChecked(fUsePrivateSend);
-        CoinControlDialog::coinControl->fUsePrivateSend = fUsePrivateSend;
+        CoinControlDialog::coinControl()->fUsePrivateSend = fUsePrivateSend;
     }
 
     connect(ui->checkUsePrivateSend, SIGNAL(stateChanged ( int )), this, SLOT(updateDisplayUnit()));
@@ -144,7 +146,6 @@ SendCoinsDialog::SendCoinsDialog(const PlatformStyle *_platformStyle, QWidget *p
     ui->labelCoinControlChange->addAction(clipboardChangeAction);
 
     // init transaction fee section
-    QSettings settings;
     if (!settings.contains("fFeeSectionMinimized"))
         settings.setValue("fFeeSectionMinimized", true);
     if (!settings.contains("nFeeRadio") && settings.contains("nTransactionFee") && settings.value("nTransactionFee").toLongLong() > 0) // compatibility
@@ -278,10 +279,13 @@ void SendCoinsDialog::on_sendButton_clicked()
         return;
     }
 
+    // Dash
     QString strFunds = tr("using") + " <b>" + tr("anonymous funds") + "</b>";
     QString strFee = "";
+    recipients[0].inputType = ONLY_DENOMINATED;
 
     if(ui->checkUsePrivateSend->isChecked()) {
+        recipients[0].inputType = ONLY_DENOMINATED;
         strFunds = tr("using") + " <b>" + tr("anonymous funds") + "</b>";
         QString strNearestAmount(
             BitcoinUnits::formatWithUnit(
@@ -290,14 +294,24 @@ void SendCoinsDialog::on_sendButton_clicked()
             "(privatesend requires this amount to be rounded up to the nearest %1)."
         ).arg(strNearestAmount));
     } else {
+        recipients[0].inputType = ALL_COINS;
         strFunds = tr("using") + " <b>" + tr("any available funds (not anonymous)") + "</b>";
     }
 
-    for (SendCoinsRecipient& rcp : recipients) {
-        rcp.inputType = ui->checkUsePrivateSend->isChecked() ? ONLY_DENOMINATED : ALL_COINS;
+    // InstantSend TODO:
+    /*
+    if(ui->checkUseInstantSend->isChecked()) {
+        recipients[0].fUseInstantSend = true;
+        strFunds += " ";
+        strFunds += tr("and InstantSend");
+    } else {
+        recipients[0].fUseInstantSend = false;
     }
+    */
+    //
 
     fNewRecipientAllowed = false;
+    // Dash
     // request unlock only if was locked or unlocked for mixing:
     // this way we let users unlock by walletpassphrase or by menu
     // and make many transactions while unlocking through this dialog
@@ -317,64 +331,11 @@ void SendCoinsDialog::on_sendButton_clicked()
     }
     // already unlocked or not encrypted at all
     send(recipients, strFee, strFunds);
+    //
 }
-// PRIVATESEND END
-    // Dash
-    // FXTC TODO: privatesend and instantsend checkbox must be added to GUI! next two rows are just temporary placeholder!
-    recipients[0].inputType = ALL_COINS;
-    recipients[0].fUseInstantSend = false;
-    /*
-    QString strFunds = tr("using") + " <b>" + tr("anonymous funds") + "</b>";
-    QString strFee = "";
-    recipients[0].inputType = ONLY_DENOMINATED;
 
-    if(ui->checkUsePrivateSend->isChecked()) {
-        recipients[0].inputType = ONLY_DENOMINATED;
-        strFunds = tr("using") + " <b>" + tr("anonymous funds") + "</b>";
-        QString strNearestAmount(
-            BitcoinUnits::formatWithUnit(
-                model->getOptionsModel()->getDisplayUnit(), CPrivateSend::GetSmallestDenomination()));
-        strFee = QString(tr(
-            "(privatesend requires this amount to be rounded up to the nearest %1)."
-        ).arg(strNearestAmount));
-    } else {
-        recipients[0].inputType = ALL_COINS;
-        strFunds = tr("using") + " <b>" + tr("any available funds (not anonymous)") + "</b>";
-    }
-
-    if(ui->checkUseInstantSend->isChecked()) {
-        recipients[0].fUseInstantSend = true;
-        strFunds += " ";
-        strFunds += tr("and InstantSend");
-    } else {
-        recipients[0].fUseInstantSend = false;
-    }*/
-    //
-
-    fNewRecipientAllowed = false;
-    // Dash
-    // request unlock only if was locked or unlocked for mixing:
-    // this way we let users unlock by walletpassphrase or by menu
-    // and make many transactions while unlocking through this dialog
-    // will call relock
-
-    //WalletModel::UnlockContext ctx(model->requestUnlock());
-    // FXTC TODO: Obsolete check, remove later
-    //WalletModel::EncryptionStatus encStatus = model->getEncryptionStatus();
-    //if(encStatus == model->Locked || encStatus == model->UnlockedForMixingOnly)
-    //{
-        WalletModel::UnlockContext ctx(model->requestUnlock());
-        // next code is unmodified only justified right
-
-        if(!ctx.isValid())
-        {
-            // Unlock wallet was cancelled
-            fNewRecipientAllowed = true;
-            return;
-        }
-    //}
-    //
-
+void SendCoinsDialog::send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds)
+{   
     // prepare transaction for getting txFee earlier
     WalletModelTransaction currentTransaction(recipients);
     WalletModel::SendCoinsReturn prepareStatus;
@@ -657,16 +618,17 @@ void SendCoinsDialog::setBalance(const interfaces::WalletBalances& balances)
     // PRIVATESEND START
     if(model && model->getOptionsModel())
     {
-      uint64_t bal = 0;
+        uint64_t bal = 0;
         QSettings settings;
         settings.setValue("bUseDarkSend", ui->checkUsePrivateSend->isChecked());
-      if(ui->checkUsePrivateSend->isChecked()) {
-        bal = anonymizedBalance;
-      } else {
-        bal = balance;
-      }
+        if(ui->checkUsePrivateSend->isChecked()) {
+            bal = balances.anonymized_balance;
+        } else {
+            bal = balances.balance;
+        }
+        //ui->labelBalance->setText(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), balance.balance));
+        ui->labelBalance->setText(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), bal));
     // PRIVATESEND END
-        ui->labelBalance->setText(BitcoinUnits::formatWithUnit(model->getOptionsModel()->getDisplayUnit(), balances.balance));
     }
 }
 
@@ -675,7 +637,7 @@ void SendCoinsDialog::updateDisplayUnit()
     setBalance(model->wallet().getBalances());
     ui->customFee->setDisplayUnit(model->getOptionsModel()->getDisplayUnit());
     // PRIVATESEND START
-    CoinControlDialog::coinControl->fUsePrivateSend = ui->checkUsePrivateSend->isChecked();
+    CoinControlDialog::coinControl()->fUsePrivateSend = ui->checkUsePrivateSend->isChecked();
     coinControlUpdateLabels();
     // PRIVATESEND END
     updateSmartFeeLabel();
@@ -1001,7 +963,7 @@ void SendCoinsDialog::coinControlUpdateLabels()
         }
     }
 
-    ui->checkUsePrivateSend->setChecked(CoinControlDialog::coinControl->fUsePrivateSend); // PRIVATESEND
+    ui->checkUsePrivateSend->setChecked(CoinControlDialog::coinControl()->fUsePrivateSend); // PRIVATESEND
 
     if (CoinControlDialog::coinControl()->HasSelected())
     {

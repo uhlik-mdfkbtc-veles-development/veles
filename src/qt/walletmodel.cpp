@@ -26,7 +26,8 @@
 #include <wallet/coincontrol.h>
 #include <wallet/wallet.h>
 // PRIVATESEND START
-#include "<privatesend-client.h>"
+#include <instantx.h>
+#include <privatesend-client.h>
 // PRIVATESEND END
 
 #include <stdint.h>
@@ -42,8 +43,9 @@ WalletModel::WalletModel(std::unique_ptr<interfaces::Wallet> wallet, interfaces:
     transactionTableModel(nullptr),
     recentRequestsTableModel(nullptr),
     cachedEncryptionStatus(Unencrypted),
-    cachedNumBlocks(0)
+    cachedNumBlocks(0),
     // PRIVATESEND START
+    cachedTxLocks(0),
     cachedPrivateSendRounds(0)
     // PRIVATESEND END
 {
@@ -86,13 +88,12 @@ void WalletModel::pollBalanceChanged()
         return;
     }
     // PRIVATESEND START
-    // if(fForceCheckBalanceChanged || m_node.getNumBlocks() != cachedNumBlocks
-    if(fForceCheckBalanceChanged || m_node.getNumBlocks() != cachedNumBlocks || privateSendClient.nPrivateSendRounds != cachedPrivateSendRounds))
+    if(fForceCheckBalanceChanged || chainActive.Height() != cachedNumBlocks || privateSendClient.nPrivateSendRounds != cachedPrivateSendRounds || cachedTxLocks != nCompleteTXLocks)
     {
         fForceCheckBalanceChanged = false;
 
         // Balance and number of transactions might have changed
-        cachedNumBlocks = m_node.getNumBlocks();
+        cachedNumBlocks = chainActive.Height();
         cachedPrivateSendRounds = privateSendClient.nPrivateSendRounds;
     // PRIVATESEND END
         checkBalanceChanged(new_balances);
@@ -103,6 +104,7 @@ void WalletModel::pollBalanceChanged()
 
 void WalletModel::checkBalanceChanged(const interfaces::WalletBalances& new_balances)
 {
+    // PRIVATESEND TODO:
     if(new_balances.balanceChanged(m_cached_balances)) {
         m_cached_balances = new_balances;
         Q_EMIT balanceChanged(new_balances);

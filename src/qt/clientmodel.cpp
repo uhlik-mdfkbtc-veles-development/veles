@@ -25,7 +25,6 @@
 #include <util/system.h>
 #include <warnings.h>
 
-#include <privatesend.h> // PRIVATESEND
 // Dash
 #include <masternodeman.h>
 #include <masternode-sync.h>
@@ -102,6 +101,14 @@ QString ClientModel::getMasternodeCountString() const
             // .arg(QString::number((int)mnodeman.CountByIP(NET_TOR)));
 }
 //
+
+// PRIVATESEND BEGIN
+int ClientModel::getNumBlocks() const
+{
+    LOCK(cs_main);
+    return chainActive.Height();
+}
+// PRIVATESEND END
 
 int ClientModel::getHeaderTipHeight() const
 {

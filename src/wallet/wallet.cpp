@@ -2597,7 +2597,7 @@ CAmount CWallet::GetAnonymizedBalance() const
 
     return nTotal;
 }
-/*
+
 // Note: calculated including unconfirmed,
 // that's ok as long as we use it for informational purposes only
 float CWallet::GetAverageAnonymizedRounds() const
@@ -2618,8 +2618,8 @@ float CWallet::GetAverageAnonymizedRounds() const
     if(nCount == 0) return 0;
 
     return (float)nTotal/nCount;
-}*/
-/*
+}
+
 // Note: calculated including unconfirmed,
 // that's ok as long as we use it for informational purposes only
 CAmount CWallet::GetNormalizedAnonymizedBalance() const
@@ -2633,14 +2633,15 @@ CAmount CWallet::GetNormalizedAnonymizedBalance() const
         map<uint256, CWalletTx>::const_iterator it = mapWallet.find(outpoint.hash);
         if (it == mapWallet.end()) continue;
         if (!IsDenominated(outpoint)) continue;
-        if (it->second.GetDepthInMainChain() < 0) continue;
+        auto locked_chain = chain().lock();
+        if (it->second.GetDepthInMainChain(*locked_chain, false) < 0) continue;
 
         int nRounds = GetOutpointPrivateSendRounds(outpoint);
-        nTotal += it->second.vout[outpoint.n].nValue * nRounds / privateSendClient.nPrivateSendRounds;
+        nTotal += it->second.tx->vout[outpoint.n].nValue * nRounds / privateSendClient.nPrivateSendRounds;
     }
 
     return nTotal;
-}*/
+}
 
 CAmount CWallet::GetNeedsToBeAnonymizedBalance(CAmount nMinBalance) const
 {

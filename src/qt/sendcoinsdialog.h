@@ -61,6 +61,9 @@ private:
     ClientModel *clientModel;
     WalletModel *model;
     bool fNewRecipientAllowed;
+    // PRIVATESEND START
+    void send(QList<SendCoinsRecipient> recipients, QString strFee, QString strFunds);
+    // PRIVATESEND END
     bool fFeeMinimized;
     const PlatformStyle *platformStyle;
 
